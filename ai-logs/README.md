@@ -27,3 +27,5 @@ All AI assistance used to build this project, kept as raw as possible.
 |---|---|---|
 | claude/00-system-design-and-steps.md | 0 | System design, implementation plan, stack decisions |
 | antigravity/step-03-agent-rules.md | 3 | Agent rules, /check workflow, decisions log |
+| antigravity/step-04-search-spec.md | 4 | Search spec, AST reference, validator catalog, fuzzy math, 46-case example catalogue |
+
