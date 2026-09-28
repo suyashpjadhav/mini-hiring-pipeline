@@ -1,0 +1,28 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Secrets and local data
+.env
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Private planning files (never commit)
+private/
+SYSTEM_DESIGN.md
+IMPLEMENTATION_PLAN.md
+instructions.md
