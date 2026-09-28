@@ -1,23 +1,38 @@
-# Python
+# Python / uv
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Tool caches
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+.hypothesis/
+.import_linter_cache/
+.coverage
+htmlcov/
 
-# Node
-node_modules/
-frontend/dist/
-
-# Secrets and local data
+# Secrets (keep the template)
 .env
+.env.*
+!.env.example
+
+# Local data, telemetry, logs
 *.db
 *.db-journal
 *.db-wal
 *.db-shm
+*.sqlite
+*.sqlite3
+var/
+*.log
 
-# OS
+# IDE / OS
+.idea/
+.vscode/
 Thumbs.db
 .DS_Store
 
