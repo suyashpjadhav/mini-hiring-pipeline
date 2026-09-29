@@ -44,7 +44,7 @@ extend-exclude = ["docs", "ai-logs", "*.md"]
 select = ["E", "F", "I", "B", "UP", "SIM", "S", "PT", "RUF"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101"]
+"tests/**" = ["S101", "S608"]
 "scripts/check.py" = ["S603", "S607"]  # Fixed argv; no shell; no user input
 
 [tool.mypy]
