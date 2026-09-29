@@ -30,5 +30,7 @@ All AI assistance used to build this project, kept as raw as possible.
 | antigravity/step-04-search-spec.md | 4 | Search spec, AST reference, validator catalog, fuzzy math, 46-case example catalogue |
 | antigravity/step-05-seed-and-answer-key.md | 5 | Seed dataset (26 candidates), golden answer key at NOW_A/NOW_B, eval dataset (54 queries), test plan |
 | antigravity/step-06-scaffold.md | 6 | Scaffold app, core infra, quality gates, CI |
+| antigravity/step-07-domain.md | 7 | Pure domain models (events, projection, hash chain) and unit/property tests |
+
 
 
