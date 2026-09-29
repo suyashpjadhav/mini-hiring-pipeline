@@ -1,0 +1,82 @@
+[project]
+name = "mini-hiring-pipeline"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.20.0",
+    "email-validator>=2.3.0",
+    "fastapi>=0.141.1",
+    "jinja2>=3.1.6",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "python-multipart>=0.0.32",
+    "python-ulid>=4.0.1",
+    "rapidfuzz>=3.14.6",
+    "sqlalchemy>=2.1.1",
+    "tzdata>=2026.4",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "beautifulsoup4>=4.15.0",
+    "httpx>=0.28.1",
+    "hypothesis>=6.168.3",
+    "import-linter>=2.15",
+    "mypy>=2.3.1",
+    "pip-audit>=2.10.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.9",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["docs", "ai-logs", "*.md"]
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "S", "PT", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+"scripts/check.py" = ["S603", "S607"]  # Fixed argv; no shell; no user input
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+files = ["app", "scripts", "tests"]
+exclude = ["migrations/"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = ["llm: needs a real API key (skipped in CI)"]
+
+[tool.importlinter]
+root_package = "app"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Core logic is pure"
+type = "forbidden"
+source_modules = ["app.features.pipeline.domain", "app.features.search.parser", "app.features.search.engine"]
+forbidden_modules = ["fastapi", "starlette", "sqlalchemy", "jinja2", "app.core.db", "app.api", "app.web"]
+
+[[tool.importlinter.contracts]]
+name = "Layering"
+type = "layers"
+layers = ["app.main", "app.api | app.web", "app.features", "app.core"]
+
+[[tool.importlinter.contracts]]
+name = "Pipeline does not depend on search"
+type = "forbidden"
+source_modules = ["app.features.pipeline"]
+forbidden_modules = ["app.features.search"]

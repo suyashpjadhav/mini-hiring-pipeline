@@ -1,0 +1,1 @@
+"""Pure search engine logic."""
