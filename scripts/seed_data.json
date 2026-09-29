@@ -1,0 +1,302 @@
+{
+  "version": 1,
+  "anchors": {
+    "now": "clock time when seeding",
+    "monday": "00:00 of the most recent Monday in APP_DEFAULT_TZ (today if Monday)"
+  },
+  "candidates": [
+    {
+      "key": "priya-sharma",
+      "full_name": "Priya Sharma",
+      "email": "priya.sharma@example.com",
+      "purpose": "Primary match for Priya Sharma / priya sharam fuzzy query; moved to Interview since Monday; active in Interview",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -480}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -300}},
+        {"action": "note",    "at": {"anchor": "now", "offset_hours": -200}, "note": "Confirmed phone screening availability"},
+        {"action": "advance", "at": {"anchor": "monday", "fraction": 0.40}},
+        {"action": "note",    "at": {"anchor": "monday", "fraction": 0.90}, "note": "Moved interview to Friday per candidate request"}
+      ]
+    },
+    {
+      "key": "priyanka-sharma",
+      "full_name": "Priyanka Sharma",
+      "email": "priyanka.sharma@example.com",
+      "purpose": "Match for Sharma surname; decoy for priya sharam fuzzy query; active in Screening",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -200}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -100}}
+      ]
+    },
+    {
+      "key": "pria-verma",
+      "full_name": "Pria Verma",
+      "email": "pria.verma@example.com",
+      "purpose": "Match for name typo 'pria'; decoy for Priya Sharma exact query; active in Applied",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -50}}
+      ]
+    },
+    {
+      "key": "riya-sharman",
+      "full_name": "Riya Sharman",
+      "email": "riya.sharman@example.com",
+      "purpose": "Near-miss decoy for Priya Sharma / sharam fuzzy query; active in Offer",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -300}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -200}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -100}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -20}}
+      ]
+    },
+    {
+      "key": "aarav-patel",
+      "full_name": "Aarav Patel",
+      "email": "aarav.patel@example.com",
+      "purpose": "Match 1 for stuck in Screening > 7 days (active 10 days in Screening)",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -300}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -240}}
+      ]
+    },
+    {
+      "key": "kavya-reddy",
+      "full_name": "Kavya Reddy",
+      "email": "kavya.reddy@example.com",
+      "purpose": "Match 2 for stuck in Screening > 7 days (active 12 days in Screening)",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -350}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -288}}
+      ]
+    },
+    {
+      "key": "rohan-mehta",
+      "full_name": "Rohan Mehta",
+      "email": "rohan.mehta@example.com",
+      "purpose": "Match 3 for stuck in Screening > 7 days (active 14 days in Screening)",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -400}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -336}}
+      ]
+    },
+    {
+      "key": "ananya-deshmukh",
+      "full_name": "Ananya Deshmukh",
+      "email": "ananya.deshmukh@example.com",
+      "purpose": "Decoy 1 for stuck > 7 days (active in Screening for 3 days)",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -100}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -72}}
+      ]
+    },
+    {
+      "key": "vikram-joshi",
+      "full_name": "Vikram Joshi",
+      "email": "vikram.joshi@example.com",
+      "purpose": "Decoy 2 for stuck > 7 days (active in Screening for 4 days)",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -120}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -96}}
+      ]
+    },
+    {
+      "key": "siddharth-rao",
+      "full_name": "Siddharth Rao",
+      "email": "siddharth.rao@example.com",
+      "purpose": "Decoy 3 for stuck > 7 days (spent 12 days in Screening, but rejected at Screening); match for rejected at Screening",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -350}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -290}},
+        {"action": "reject",  "at": {"anchor": "now", "offset_hours": -2}}
+      ]
+    },
+    {
+      "key": "aditi-nair",
+      "full_name": "Aditi Nair",
+      "email": "aditi.nair@example.com",
+      "purpose": "Boundary test: active in Screening exactly 7x24h (168h) at NOW_A. Excluded by gt 7, included by gte 7",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -200}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -168}}
+      ]
+    },
+    {
+      "key": "arjun-chatterjee",
+      "full_name": "Arjun Chatterjee",
+      "email": "arjun.chatterjee@example.com",
+      "purpose": "Match 2 for moved to Interview since Monday; currently active at Offer; drives INCLUDE_PENDING hint",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -400}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -300}},
+        {"action": "advance", "at": {"anchor": "monday", "fraction": 0.20}},
+        {"action": "advance", "at": {"anchor": "monday", "fraction": 0.80}}
+      ]
+    },
+    {
+      "key": "divya-singh",
+      "full_name": "Divya Singh",
+      "email": "divya.singh@example.com",
+      "purpose": "Match 3 for moved to Interview since Monday; rejected at Interview; match 1 for rejected at Interview",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -350}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -250}},
+        {"action": "advance", "at": {"anchor": "monday", "fraction": 0.30}},
+        {"action": "reject",  "at": {"anchor": "monday", "fraction": 0.85}}
+      ]
+    },
+    {
+      "key": "kabir-bhatia",
+      "full_name": "Kabir Bhatia",
+      "email": null,
+      "purpose": "Decoy 1 for moved to Interview since Monday (moved 5 days ago); active in Interview; candidate with no email",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -200}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -150}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -120}}
+      ]
+    },
+    {
+      "key": "neha-gupta",
+      "full_name": "Neha Gupta",
+      "email": "neha.gupta@example.com",
+      "purpose": "Decoy 2 for moved to Interview since Monday (moved 6 days ago); active at Offer",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -250}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -200}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -144}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -80}}
+      ]
+    },
+    {
+      "key": "dhruv-kapoor",
+      "full_name": "Dhruv Kapoor",
+      "email": "dhruv.kapoor@example.com",
+      "purpose": "Match 1 for reached Offer but didn't get hired (reached Offer, rejected at Offer)",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -400}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -300}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -200}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -100}},
+        {"action": "reject",  "at": {"anchor": "now", "offset_hours": -40}}
+      ]
+    },
+    {
+      "key": "tanya-saxena",
+      "full_name": "Tanya Saxena",
+      "email": "tanya.saxena@example.com",
+      "purpose": "Match 2 for reached Offer but didn't get hired (reached Offer, rejected at Offer)",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -450}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -350}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -250}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -120}},
+        {"action": "reject",  "at": {"anchor": "now", "offset_hours": -50}}
+      ]
+    },
+    {
+      "key": "ishaan-malhotra",
+      "full_name": "Ishaan Malhotra",
+      "email": "ishaan.malhotra@example.com",
+      "purpose": "Match 3 for reached Offer but didn't get hired (reached Offer, rejected at Offer)",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -500}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -400}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -300}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -150}},
+        {"action": "reject",  "at": {"anchor": "now", "offset_hours": -60}}
+      ]
+    },
+    {
+      "key": "varun-verma",
+      "full_name": "Varun Verma",
+      "email": "varun.verma@example.com",
+      "purpose": "Hired candidate 1; decoy for reached offer but didn't get hired",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -600}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -500}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -400}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -300}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -200}}
+      ]
+    },
+    {
+      "key": "meera-iyer",
+      "full_name": "Meera Iyer",
+      "email": "meera.iyer@example.com",
+      "purpose": "Hired candidate 2; decoy for reached offer but didn't get hired",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -650}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -550}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -450}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -350}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -250}}
+      ]
+    },
+    {
+      "key": "sanjay-kulkarni",
+      "full_name": "Sanjay Kulkarni",
+      "email": "sanjay.kulkarni@example.com",
+      "purpose": "Match 2 for rejected at Interview",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -300}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -200}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -100}},
+        {"action": "reject",  "at": {"anchor": "now", "offset_hours": -30}}
+      ]
+    },
+    {
+      "key": "tarun-banerjee",
+      "full_name": "Tarun Banerjee",
+      "email": "tarun.banerjee@example.com",
+      "purpose": "Match for rejected at Applied",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -150}},
+        {"action": "reject",  "at": {"anchor": "now", "offset_hours": -100}}
+      ]
+    },
+    {
+      "key": "yash-chawla",
+      "full_name": "Yash Chawla",
+      "email": "yash.chawla@example.com",
+      "purpose": "Short stay in Interview <= 3 days (entered Interview 66h ago); match for lte 3 days query",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -150}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -100}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -66}}
+      ]
+    },
+    {
+      "key": "pooja-mishra",
+      "full_name": "Pooja Mishra",
+      "email": "pooja.mishra@example.com",
+      "purpose": "Candidate with NOTE events; active in Interview",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -250}},
+        {"action": "note",    "at": {"anchor": "now", "offset_hours": -200}, "note": "Rescheduled phone screening per recruiter note"},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -180}},
+        {"action": "note",    "at": {"anchor": "now", "offset_hours": -120}, "note": "Strong background in Python backend architecture"},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -72}}
+      ]
+    },
+    {
+      "key": "rahul-dasgupta",
+      "full_name": "Rahul Dasgupta",
+      "email": null,
+      "purpose": "Candidate with NOTE event; active in Screening; candidate without email",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -120}},
+        {"action": "advance", "at": {"anchor": "now", "offset_hours": -90}},
+        {"action": "note",    "at": {"anchor": "now", "offset_hours": -40}, "note": "Verified reference letters and background check"}
+      ]
+    },
+    {
+      "key": "zoya-sengupta",
+      "full_name": "Zoya Sengupta",
+      "email": "zoya.sengupta@example.com",
+      "purpose": "Active in Applied for 24 hours; baseline active candidate",
+      "events": [
+        {"action": "create",  "at": {"anchor": "now", "offset_hours": -24}}
+      ]
+    }
+  ]
+}

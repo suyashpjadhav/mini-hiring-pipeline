@@ -335,12 +335,12 @@ flowchart TD
 
 ### Scoring Formula
 1. **Term Score** ($S_{\text{term}}(t, k)$): Query term $t$ vs name token $k$:
-   - If $t = k \rightarrow 1.0$
-   - Else if $len(t) \ge 2$ and $k.startswith(t) \rightarrow 0.92$ (prefix bonus)
+   - If $t = k \rightarrow 1.0$ (exact match)
+   - Else if $len(t) \ge 2$ and $k.startswith(t) \rightarrow 0.92$ (prefix match)
    - Else if $DL(t, k) \le \text{budget}(t)$:
      $DL_{\text{norm}} = 1.0 - \frac{DL(t, k)}{\max(len(t), len(k))}$
      $JW = \text{JaroWinkler}(t, k) \text{ if } len(t) \ge 4 \text{ else } 0.0$
-     $S_{\text{term}} = \max(DL_{\text{norm}}, JW)$
+     $S_{\text{term}} = 0.90 \times \max(DL_{\text{norm}}, JW)$ (fuzzy match scaled by $0.90$ so match types stay strictly tiered: exact $1.0 >$ prefix $0.92 >$ fuzzy $\le 0.90$, while fuzzy similarity still orders candidates within the tier).
    - Else $\rightarrow 0.0$
 2. **Edit Budget**: $len(t) \le 4 \rightarrow 1$; $len(t) \le 8 \rightarrow 2$; $len(t) > 8 \rightarrow 3$.
 3. **Name Score**: Mean of term scores $+ 0.03$ order bonus if term matches appear in strict left-to-right order across candidate name tokens (capped at $1.0$).
@@ -362,17 +362,41 @@ flowchart TD
 
 ### Score Normalization
 - Name Queries: Displayed score is exact Name Score (0.00 to 1.00).
-- Non-Name Queries: Rank-normalized score: $1.0 - \frac{\text{rank} - 1}{\max(\text{total\_results}, 10)}$.
+- Non-Name Queries: Rank-normalized score: $1.0 - \frac{i}{n}$, where $i$ is the 0-based rank ($0, 1, \dots, n-1$) and $n$ is total result count, rounded to 2 decimal places (e.g., for $n=4$: $1.00, 0.75, 0.50, 0.25$; for $n=3$: $1.00, 0.67, 0.33$).
 
-### Reason & Chip Text Templates
-- **Chips**: `"Name ≈ sharam"`, `"In Screening > 7 days"`, `"In Screening ≥ 7 days"`, `"Moved to Interview since Mon"`, `"Reached Offer"`, `"Rejected at Interview"`, `"Status: Not Rejected"`
-- **Reasons**:
-  - `Name ≈ "sharam" → Sharma (1 Damerau-Levenshtein edit, JW 0.97)`
-  - `In Screening for 11 days (> 7 days target)`
-  - `In Screening for 8 days (≥ 7 days target)`
-  - `Moved to Interview on Tue 29 Sep 2026, 14:05 IST`
-  - `Reached Offer · Rejected on Mon 28 Sep 2026`
-  - `Rejected at Interview stage on Mon 28 Sep 2026`
+### Reason & Chip Text Templates (Single Source of Truth)
+
+#### Chips:
+- **Name (Fuzzy)**: `Name ≈ "{term}"`
+- **Name (Exact)**: `Name: "{term}"`
+- **CurrentStage**: `In {stage}`
+- **StatusIs (negate=True)**: `Status: Not {status}`
+- **StatusIs (rejected at stage)**: `Rejected at {at_stage}`
+- **StatusIs**: `Status: {status}`
+- **TimeInStage (`gt`)**: `In {stage} > {days} days`
+- **TimeInStage (`gte`)**: `In {stage} ≥ {days} days`
+- **TimeInStage (`lt`)**: `In {stage} < {days} days`
+- **TimeInStage (`lte`)**: `In {stage} ≤ {days} days`
+- **MovedTo**: `Moved to {target}`
+- **Reached**: `Reached {stage}`
+- **Added**: `Added this week`
+
+#### Reason Text Templates:
+- **Name (Exact)**: `Name: "{term}" = {Token}`
+- **Name (Prefix)**: `Name: "{term}" → {Token} (prefix)`
+- **Name (Fuzzy)**: `Name ≈ "{term}" → {Token} ({edits} edit{s})`
+- **CurrentStage**: `In {stage} stage`
+- **StatusIs (negate=True)**: `Status: Not {status}`
+- **StatusIs (rejected at stage)**: `Rejected at {at_stage} stage on {dt}`
+- **StatusIs**: `Status: {status}`
+- **TimeInStage (`gt`)**: `In {stage} for {d} days (>{target_days} days target)`
+- **TimeInStage (`gte`)**: `In {stage} for {d} days (≥{target_days} days target)`
+- **TimeInStage (`lt`)**: `In {stage} for {d} days (<{target_days} days target)`
+- **TimeInStage (`lte`)**: `In {stage} for {d} days (≤{target_days} days target)`
+- **MovedTo**: `Moved to {target} on {dt}`
+- **Reached (active/hired)**: `Reached {stage}`
+- **Reached (rejected)**: `Reached {stage} · Rejected on {dt}`
+- **Added**: `Added this week`
 
 ---
 
@@ -474,13 +498,14 @@ Rules:
 {"id":"combo-1","category":"combo","q":"priya moved to interview since monday","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"moved_to","target":"Interview","since":"2026-09-27T18:30:00Z","until":null}],"name_terms":["priya"],"source":"rules"},"errors":[],"warnings":[],"hints":[],"note":"Combo: name + moved_to since monday"}
 {"id":"combo-2","category":"combo","q":"stuck in screening over a week except rejected","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"time_in_stage","stage":"Screening","op":"gt","days":7.0},{"kind":"status","status":"rejected","negate":true}],"name_terms":[],"source":"rules"},"errors":[],"warnings":[],"hints":[],"note":"Combo: time_in_stage + status!=rejected"}
 {"id":"combo-3","category":"combo","q":"priya in interview","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"current_stage","stages":["Interview"]}],"name_terms":["priya"],"source":"rules"},"errors":[],"warnings":[],"hints":[],"note":"Combo: name + current_stage"}
-{"id":"combo-4","category":"combo","q":"in screening for more than 5 days and added this week","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"time_in_stage","stage":"Screening","op":"gt","days":5.0},{"kind":"added","since":"2026-09-27T18:30:00Z","until":null}],"name_terms":[],"source":"rules"},"errors":[],"warnings":[],"hints":[],"note":"Combo: time_in_stage + added this week"}
+{"id":"combo-4","category":"combo","q":"in screening for more than 5 days and added this week","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"time_in_stage","stage":"Screening","op":"gt","days":5.0},{"kind":"added","since":"2026-09-27T18:30:00Z","until":null}],"name_terms":[],"source":"rules"},"errors":[],"warnings":[],"hints":["EMPTY_RESULT"],"note":"Combo: time_in_stage + added this week"}
 {"id":"combo-5","category":"combo","q":"reached offer and status active","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"reached","stage":"Offer","negate":false},{"kind":"status","status":"active","negate":false}],"name_terms":[],"source":"rules"},"errors":[],"warnings":[],"hints":[],"note":"Combo: reached offer + status active"}
 {"id":"combo-6","category":"combo","q":"moved to interview since monday except rejected","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"moved_to","target":"Interview","since":"2026-09-27T18:30:00Z","until":null},{"kind":"status","status":"rejected","negate":true}],"name_terms":[],"source":"rules"},"errors":[],"warnings":[],"hints":[],"note":"Combo: moved_to + status!=rejected"}
 {"id":"typo-1","category":"typo","q":"screning","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"current_stage","stages":["Screening"]}],"name_terms":[],"source":"rules"},"errors":[],"warnings":["DID_YOU_MEAN"],"hints":[],"note":"Stage typo screning -> Screening"}
 {"id":"typo-2","category":"typo","q":"intervew","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"current_stage","stages":["Interview"]}],"name_terms":[],"source":"rules"},"errors":[],"warnings":["DID_YOU_MEAN"],"hints":[],"note":"Stage typo intervew -> Interview"}
 {"id":"typo-3","category":"typo","q":"pria","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[],"name_terms":["pria"],"source":"rules"},"errors":[],"warnings":[],"hints":[],"note":"Name typo pria matching Priya"}
 {"id":"typo-4","category":"typo","q":"sharma in screnin","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[{"kind":"current_stage","stages":["Screening"]}],"name_terms":["sharma"],"source":"rules"},"errors":[],"warnings":["DID_YOU_MEAN"],"hints":[],"note":"Combo with stage typo screnin"}
+{"id":"priya-1","category":"typo","q":"priya","now":"NOW_A","llm":"off","route":"rules","ast":{"clauses":[],"name_terms":["priya"],"source":"rules"},"errors":[],"warnings":[],"hints":[],"note":"Single token name query priya matching Priya, Priyanka, Pria, Riya"}
 {"id":"inv-1","category":"invalid","q":"in onboarding","now":"NOW_A","llm":"off","route":"error","ast":null,"errors":["UNKNOWN_STAGE"],"warnings":[],"hints":[],"note":"Unknown stage term onboarding"}
 {"id":"inv-2","category":"invalid","q":"stuck in hired","now":"NOW_A","llm":"off","route":"error","ast":null,"errors":["FINAL_STAGE_STUCK"],"warnings":[],"hints":[],"note":"Stuck filter applied to final stage Hired"}
 {"id":"inv-3","category":"invalid","q":"moved to applied since monday","now":"NOW_A","llm":"off","route":"error","ast":null,"errors":["START_STAGE_MOVE"],"warnings":[],"hints":[],"note":"Moved to Applied invalid transition query"}
