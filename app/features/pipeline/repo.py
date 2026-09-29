@@ -250,3 +250,8 @@ class PipelineRepo:
         """List all candidate IDs ordered by creation time."""
         stmt = select(candidates.c.id).order_by(candidates.c.created_at.asc())
         return list(self.conn.execute(stmt).scalars().all())
+
+    def check_db(self) -> bool:
+        """Trivial database read check."""
+        self.conn.execute(select(1))
+        return True

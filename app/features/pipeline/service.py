@@ -363,3 +363,12 @@ class PipelineService:
             time_in_stage_seconds=time_in_stage,
             last_event_at=state.last_event_at,
         )
+
+    def check_db(self) -> bool:
+        """Check database connectivity via a read transaction."""
+        try:
+            with read_tx(self.engine) as conn:
+                PipelineRepo(conn).check_db()
+            return True
+        except Exception:
+            return False
