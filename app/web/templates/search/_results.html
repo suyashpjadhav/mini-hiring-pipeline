@@ -1,0 +1,79 @@
+<div id="board"
+     class="board-container search-results-container"
+     hx-get="/ui/search?q={{ q|urlencode }}"
+     hx-trigger="board-refresh from:body"
+     hx-target="this"
+     hx-swap="outerHTML">
+
+  <div class="search-header-bar">
+    <div class="search-meta-group">
+      {% if interpretation and interpretation.chips %}
+        <div class="search-chips-group">
+          {% for chip in interpretation.chips %}
+            <span class="chip chip-interpretation">{{ chip }}</span>
+          {% endfor %}
+          {% if interpretation.source == "llm" %}
+            <span class="chip chip-ai">Interpreted by AI</span>
+          {% endif %}
+        </div>
+      {% endif %}
+      <p class="search-stats">{{ n }} results &middot; {{ took_ms }} ms</p>
+    </div>
+    <a href="/" hx-get="/ui/search?q=" hx-target="#board" hx-swap="outerHTML" class="clear-search-link">Clear search</a>
+  </div>
+
+  {% include "search/_errors.html" %}
+
+  {% if results %}
+    <div class="card-grid search-results-grid">
+      {% for item in results %}
+        {% set candidate = item.candidate %}
+        <article class="card candidate-card search-result-card" data-id="{{ candidate.id }}">
+          <div class="card-header">
+            <button type="button"
+                    class="card-name"
+                    hx-get="/ui/candidates/{{ candidate.id }}"
+                    hx-target="#drawer"
+                    hx-swap="innerHTML"
+                    aria-label="Open history for {{ candidate.full_name }}">{{ candidate.full_name }}</button>
+            {% if candidate.email %}
+              <span class="card-email">{{ candidate.email }}</span>
+            {% endif %}
+          </div>
+
+          <div class="card-meta">
+            <span class="badge {{ candidate | card_badge_class }}">{{ candidate | card_badge_text(now) }}</span>
+          </div>
+
+          <div class="search-score-bar">
+            <label class="score-label" for="meter-{{ candidate.id }}">Score {{ "%.2f"|format(item.score) }}</label>
+            <meter id="meter-{{ candidate.id }}" min="0" max="1" value="{{ item.score }}"></meter>
+            <span class="score-value">{{ "%.2f"|format(item.score) }}</span>
+          </div>
+
+          {% if item.reasons %}
+            <ul class="search-reasons">
+              {% for reason in item.reasons %}
+                <li>{{ reason }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% elif not errors and not hints %}
+    <div class="no-matches-container">
+      <h2 class="no-matches-title">No matches</h2>
+      <p class="no-matches-subtitle">Try one of these example searches:</p>
+      <div class="no-matches-chips">
+        <button type="button" class="chip chip-example" data-q="Find Priya Sharma" hx-get="/ui/search?q=Find%20Priya%20Sharma" hx-target="#board" hx-swap="outerHTML">Find Priya Sharma</button>
+        <button type="button" class="chip chip-example" data-q="Who's in Interview right now?" hx-get="/ui/search?q=Who%27s%20in%20Interview%20right%20now%3F" hx-target="#board" hx-swap="outerHTML">Who's in Interview right now?</button>
+        <button type="button" class="chip chip-example" data-q="Stuck in Screening for more than a week" hx-get="/ui/search?q=Stuck%20in%20Screening%20for%20more%20than%20a%20week" hx-target="#board" hx-swap="outerHTML">Stuck in Screening for more than a week</button>
+        <button type="button" class="chip chip-example" data-q="Who moved to Interview since Monday?" hx-get="/ui/search?q=Who%20moved%20to%20Interview%20since%20Monday%3F" hx-target="#board" hx-swap="outerHTML">Who moved to Interview since Monday?</button>
+        <button type="button" class="chip chip-example" data-q="Reached Offer but didn't get hired" hx-get="/ui/search?q=Reached%20Offer%20but%20didn%27t%20get%20hired" hx-target="#board" hx-swap="outerHTML">Reached Offer but didn't get hired</button>
+        <button type="button" class="chip chip-example" data-q="Everyone except rejected" hx-get="/ui/search?q=Everyone%20except%20rejected" hx-target="#board" hx-swap="outerHTML">Everyone except rejected</button>
+        <button type="button" class="chip chip-example" data-q="priya moved to interview since monday" hx-get="/ui/search?q=priya%20moved%20to%20interview%20since%20monday" hx-target="#board" hx-swap="outerHTML">priya moved to interview since monday</button>
+      </div>
+    </div>
+  {% endif %}
+</div>

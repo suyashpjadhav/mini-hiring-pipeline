@@ -1,0 +1,32 @@
+{% if errors or warnings or hints %}
+  <div class="search-feedback-panel">
+    {% for err in errors %}
+      <div class="search-card search-card-error">
+        <h3 class="search-feedback-title">Search Error</h3>
+        <p class="search-message-text">{{ err.message }}</p>
+        {% if err.hint %}
+          <p class="search-hint-text">{{ err.hint }}</p>
+        {% endif %}
+        {% if err.code == "NOT_UNDERSTOOD" %}
+          <div class="suggestion-chips">
+            <span class="suggestion-label">Try searching:</span>
+            <button type="button" class="chip chip-suggestion" data-q="in interview" hx-get="/ui/search?q=in%20interview" hx-target="#board" hx-swap="outerHTML">in interview</button>
+            <button type="button" class="chip chip-suggestion" data-q="stuck in screening for more than a week" hx-get="/ui/search?q=stuck%20in%20screening%20for%20more%20than%20a%20week" hx-target="#board" hx-swap="outerHTML">stuck in screening for more than a week</button>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    {% for warn in warnings %}
+      <div class="search-card search-card-warning">
+        <p class="search-warning-text">{{ warn.message }}</p>
+      </div>
+    {% endfor %}
+
+    {% for h in hints %}
+      <div class="search-card search-card-hint">
+        <p class="search-hint-text">{{ h.message }}</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

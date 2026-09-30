@@ -156,12 +156,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Escape key listener to close candidate drawer
+// Copy data-q attribute into search input on example chip click
+document.addEventListener("click", (evt) => {
+  const btn = evt.target ? evt.target.closest("button[data-q]") : null;
+  if (btn) {
+    const qVal = btn.getAttribute("data-q");
+    const input = document.getElementById("search-input");
+    if (input && qVal !== null) {
+      input.value = qVal;
+    }
+  }
+});
+
+// Global keyboard shortcuts: Escape closes drawer, '/' focuses search input
 document.addEventListener("keydown", (evt) => {
   if (evt.key === "Escape") {
     const drawerEl = document.getElementById("drawer");
     if (drawerEl && drawerEl.children.length > 0) {
       drawerEl.replaceChildren();
+    }
+  } else if (evt.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(evt.target?.tagName)) {
+    const input = document.getElementById("search-input");
+    if (input) {
+      evt.preventDefault();
+      input.focus();
     }
   }
 });

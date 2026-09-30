@@ -36,4 +36,5 @@ All AI assistance used to build this project, kept as raw as possible.
 | antigravity/step-11-board.md | 11 | Kanban board grouped by stage, add candidate modal, advance and reject HTMX routes |
 | antigravity/step-12-drawer.md | 12 | Candidate detail drawer, live stage timer, audit timeline, history verified badge, and add note route |
 | antigravity/step-13-search-engine.md | 13 | Search engine: deterministic rule parser, validator, SQLAlchemy Core repo, ranker, explanations, and golden test suite |
+| antigravity/step-14-search-ui.md | 14 | Search UI: route GET /ui/search, header input + example chips, results & errors partials, CSP/CSS tokens, and web tests |
 

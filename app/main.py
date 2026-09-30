@@ -17,6 +17,7 @@ from app.core.logging import configure_logging
 from app.core.security import add_security_middleware
 from app.web.routes.candidates import router as web_candidates_router
 from app.web.routes.pages import router as pages_router
+from app.web.routes.search import router as web_search_router
 
 
 def create_app(
@@ -56,6 +57,7 @@ def create_app(
     app.include_router(candidates_router)
     app.include_router(search_router)
     app.include_router(web_candidates_router)
+    app.include_router(web_search_router)
     app.include_router(pages_router)
 
     return app

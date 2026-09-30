@@ -1,23 +1,41 @@
 <header class="app-header">
-  <div class="brand">
-    <span class="wordmark">Pipeline.</span>
-    <span class="job-title">{{ job_title }}</span>
+  <div class="header-top">
+    <div class="brand">
+      <span class="wordmark">Pipeline.</span>
+      <span class="job-title">{{ job_title }}</span>
+    </div>
+    <div class="search-container">
+      <label for="search-input" class="visually-hidden">Search candidates</label>
+      <input
+        id="search-input"
+        type="search"
+        name="q"
+        class="search-input"
+        placeholder="Try: stuck in screening for more than a week"
+        hx-get="/ui/search"
+        hx-trigger="input changed delay:250ms, search"
+        hx-target="#board"
+        hx-swap="outerHTML"
+        hx-sync="this:replace"
+        aria-label="Search candidates"
+      >
+    </div>
+    <button
+      type="button"
+      class="btn-round"
+      hx-get="/ui/candidates/new"
+      hx-target="#dialog"
+      hx-swap="innerHTML"
+      aria-label="Add candidate"
+    >+</button>
   </div>
-  <div class="search-container">
-    <input
-      type="search"
-      class="search-input"
-      placeholder="Search candidates… (coming soon)"
-      disabled
-      aria-label="Search candidates"
-    >
+  <div class="search-example-chips" aria-label="Example search queries">
+    <button type="button" class="chip chip-example" data-q="Find Priya Sharma" hx-get="/ui/search?q=Find%20Priya%20Sharma" hx-target="#board" hx-swap="outerHTML">Find Priya Sharma</button>
+    <button type="button" class="chip chip-example" data-q="Who's in Interview right now?" hx-get="/ui/search?q=Who%27s%20in%20Interview%20right%20now%3F" hx-target="#board" hx-swap="outerHTML">Who's in Interview right now?</button>
+    <button type="button" class="chip chip-example" data-q="Stuck in Screening for more than a week" hx-get="/ui/search?q=Stuck%20in%20Screening%20for%20more%20than%20a%20week" hx-target="#board" hx-swap="outerHTML">Stuck in Screening for more than a week</button>
+    <button type="button" class="chip chip-example" data-q="Who moved to Interview since Monday?" hx-get="/ui/search?q=Who%20moved%20to%20Interview%20since%20Monday%3F" hx-target="#board" hx-swap="outerHTML">Who moved to Interview since Monday?</button>
+    <button type="button" class="chip chip-example" data-q="Reached Offer but didn't get hired" hx-get="/ui/search?q=Reached%20Offer%20but%20didn%27t%20get%20hired" hx-target="#board" hx-swap="outerHTML">Reached Offer but didn't get hired</button>
+    <button type="button" class="chip chip-example" data-q="Everyone except rejected" hx-get="/ui/search?q=Everyone%20except%20rejected" hx-target="#board" hx-swap="outerHTML">Everyone except rejected</button>
+    <button type="button" class="chip chip-example" data-q="priya moved to interview since monday" hx-get="/ui/search?q=priya%20moved%20to%20interview%20since%20monday" hx-target="#board" hx-swap="outerHTML">priya moved to interview since monday</button>
   </div>
-  <button
-    type="button"
-    class="btn-round"
-    hx-get="/ui/candidates/new"
-    hx-target="#dialog"
-    hx-swap="innerHTML"
-    aria-label="Add candidate"
-  >+</button>
 </header>
