@@ -200,3 +200,12 @@ ai-logs/README.md
 
 IMPLEMENTATION_PLAN.md
 . -->
+
+## CI fix
+- **Bug**: `tests/api/test_health.py` instantiated `client = TestClient(app)` at module level without a context manager, causing lifespan (`run_migrations`) to not execute and causing tests to hit default `var/app.db` (failing in fresh CI checkout where `var/app.db` does not exist).
+- **Fix**:
+  1. Rewrote `tests/api/test_health.py` to use the isolated `client` fixture from `tests/api/conftest.py`.
+  2. Added autouse session-scoped fixture `guard_test_database_isolation` in `tests/conftest.py` setting `DATABASE_URL` env var to a temporary file database and clearing `get_settings` cache to guarantee no test ever touches `var/app.db`.
+  3. Verified by temporarily removing `var/app.db` and running `scripts.check` (all 160 tests passed).
+- **Commit**: `2fdfb63` (`test: isolate app tests from the dev database (fixes CI)`)
+
