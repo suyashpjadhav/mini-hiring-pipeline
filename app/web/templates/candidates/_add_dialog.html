@@ -1,0 +1,42 @@
+<dialog class="add-candidate-dialog" x-data="modal">
+  <div class="dialog-content">
+    <h2 class="dialog-title">Add Candidate</h2>
+    <form hx-post="/ui/candidates" hx-target="#board" hx-swap="outerHTML" class="dialog-form">
+      <div class="form-group">
+        <label for="full_name" class="form-label">Full Name</label>
+        <input
+          type="text"
+          id="full_name"
+          name="full_name"
+          class="form-input{% if errors and errors.full_name %} is-invalid{% endif %}"
+          value="{{ full_name or '' }}"
+          {% if errors and errors.full_name %}aria-describedby="full_name-error"{% endif %}
+          required
+        >
+        {% if errors and errors.full_name %}
+          <span id="full_name-error" class="field-error">{{ errors.full_name }}</span>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email (optional)</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-input{% if errors and errors.email %} is-invalid{% endif %}"
+          value="{{ email or '' }}"
+          {% if errors and errors.email %}aria-describedby="email-error"{% endif %}
+        >
+        {% if errors and errors.email %}
+          <span id="email-error" class="field-error">{{ errors.email }}</span>
+        {% endif %}
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn-pill" x-on:click="close">Cancel</button>
+        <button type="submit" class="btn-pill btn-primary">Add Candidate</button>
+      </div>
+    </form>
+  </div>
+</dialog>

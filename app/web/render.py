@@ -9,8 +9,23 @@ from fastapi.templating import Jinja2Templates
 
 from app.core.config import get_settings
 from app.core.timeutil import resolve_tz
+from app.web.formatting import (
+    card_badge_class,
+    card_badge_text,
+    duration_class,
+    format_duration,
+)
 
 templates = Jinja2Templates(directory="app/web/templates")
+templates.env.globals["format_duration"] = format_duration
+templates.env.globals["duration_class"] = duration_class
+templates.env.globals["card_badge_class"] = card_badge_class
+templates.env.globals["card_badge_text"] = card_badge_text
+
+templates.env.filters["format_duration"] = format_duration
+templates.env.filters["duration_class"] = duration_class
+templates.env.filters["card_badge_class"] = card_badge_class
+templates.env.filters["card_badge_text"] = card_badge_text
 
 
 def resolve_request_tz(request: Request, default: str) -> str:
@@ -26,6 +41,8 @@ def render(
     context: dict[str, Any],
     *,
     toast: tuple[str, str] | None = None,
+    triggers: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
     status_code: int = 200,
 ) -> HTMLResponse:
     """Render Jinja2 template injecting csrf_token, job_title, and tz into context."""
@@ -42,9 +59,18 @@ def render(
     content = templates.get_template(template_name).render(full_context)
     response = HTMLResponse(content=content, status_code=status_code)
 
+    if headers:
+        for k, v in headers.items():
+            response.headers[k] = v
+
+    trigger_payload: dict[str, Any] = {}
     if toast is not None:
         kind, message = toast
-        payload = json.dumps({"toast": {"kind": kind, "message": message}})
-        response.headers["HX-Trigger"] = payload
+        trigger_payload["toast"] = {"kind": kind, "message": message}
+    if triggers:
+        trigger_payload.update(triggers)
+
+    if trigger_payload:
+        response.headers["HX-Trigger"] = json.dumps(trigger_payload)
 
     return response

@@ -1,0 +1,110 @@
+{% set applied_list = board.applied if board else [] %}
+{% set screening_list = board.screening if board else [] %}
+{% set interview_list = board.interview if board else [] %}
+{% set offer_list = board.offer if board else [] %}
+{% set hired_list = board.hired if board else [] %}
+{% set rejected_list = board.rejected if board else [] %}
+
+<div id="board" class="board-container">
+  <div class="board-summary">
+    <p class="summary-text">{{ total or 0 }} candidates &middot; {{ active or 0 }} active</p>
+  </div>
+
+  <div class="board-grid">
+    <!-- Applied -->
+    <section class="board-column" aria-labelledby="col-applied-title">
+      <div class="column-header">
+        <h2 id="col-applied-title" class="column-title">Applied <span class="column-count">({{ applied_list | length }})</span></h2>
+      </div>
+      <div class="column-cards">
+        {% if applied_list %}
+          {% for candidate in applied_list %}
+            {% include "board/_card.html" %}
+          {% endfor %}
+        {% else %}
+          <p class="empty-column">No one here yet</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Screening -->
+    <section class="board-column" aria-labelledby="col-screening-title">
+      <div class="column-header">
+        <h2 id="col-screening-title" class="column-title">Screening <span class="column-count">({{ screening_list | length }})</span></h2>
+      </div>
+      <div class="column-cards">
+        {% if screening_list %}
+          {% for candidate in screening_list %}
+            {% include "board/_card.html" %}
+          {% endfor %}
+        {% else %}
+          <p class="empty-column">No one here yet</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Interview -->
+    <section class="board-column" aria-labelledby="col-interview-title">
+      <div class="column-header">
+        <h2 id="col-interview-title" class="column-title">Interview <span class="column-count">({{ interview_list | length }})</span></h2>
+      </div>
+      <div class="column-cards">
+        {% if interview_list %}
+          {% for candidate in interview_list %}
+            {% include "board/_card.html" %}
+          {% endfor %}
+        {% else %}
+          <p class="empty-column">No one here yet</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Offer -->
+    <section class="board-column" aria-labelledby="col-offer-title">
+      <div class="column-header">
+        <h2 id="col-offer-title" class="column-title">Offer <span class="column-count">({{ offer_list | length }})</span></h2>
+      </div>
+      <div class="column-cards">
+        {% if offer_list %}
+          {% for candidate in offer_list %}
+            {% include "board/_card.html" %}
+          {% endfor %}
+        {% else %}
+          <p class="empty-column">No one here yet</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Hired -->
+    <section class="board-column" aria-labelledby="col-hired-title">
+      <div class="column-header">
+        <h2 id="col-hired-title" class="column-title">Hired <span class="column-count">({{ hired_list | length }})</span></h2>
+      </div>
+      <div class="column-cards">
+        {% if hired_list %}
+          {% for candidate in hired_list %}
+            {% include "board/_card.html" %}
+          {% endfor %}
+        {% else %}
+          <p class="empty-column">No one here yet</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Rejected -->
+    <section class="board-column" aria-labelledby="col-rejected-title">
+      <div class="column-header">
+        <h2 id="col-rejected-title" class="column-title">Rejected <span class="column-count">({{ rejected_list | length }})</span></h2>
+      </div>
+      <div class="column-cards">
+        {% if rejected_list %}
+          {% for candidate in rejected_list %}
+            {% include "board/_card.html" %}
+          {% endfor %}
+        {% else %}
+          <p class="empty-column">No one here yet</p>
+        {% endif %}
+      </div>
+    </section>
+  </div>
+</div>

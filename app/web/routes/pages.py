@@ -17,7 +17,7 @@ def index_page(
     request: Request,
     service: Annotated[PipelineService, Depends(get_pipeline_service)],
 ) -> HTMLResponse:
-    """Render index page shell."""
+    """Render index page shell with board."""
     board = service.board()
     total = (
         len(board.applied)
@@ -27,4 +27,14 @@ def index_page(
         + len(board.hired)
         + len(board.rejected)
     )
-    return render(request, "pages/index.html", {"total": total})
+    active = len(board.applied) + len(board.screening) + len(board.interview) + len(board.offer)
+    return render(
+        request,
+        "pages/index.html",
+        {
+            "board": board,
+            "total": total,
+            "active": active,
+            "now": service.clock.now(),
+        },
+    )

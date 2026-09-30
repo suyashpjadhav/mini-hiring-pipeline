@@ -41,6 +41,49 @@ document.addEventListener("alpine:init", () => {
     },
   }));
 
+  // Confirm Reject inline panel component
+  Alpine.data("confirmReject", () => ({
+    showing: false,
+    open() {
+      this.showing = true;
+    },
+    toggle() {
+      this.showing = !this.showing;
+    },
+    close() {
+      this.showing = false;
+    },
+  }));
+
+  // Modal dialog component
+  Alpine.data("modal", () => ({
+    init() {
+      if (this.$el && typeof this.$el.showModal === "function") {
+        try {
+          this.$el.showModal();
+        } catch (_err) {
+          // Ignore if already open
+        }
+      }
+      this._onCloseDialog = () => this.close();
+      window.addEventListener("close-dialog", this._onCloseDialog);
+    },
+    destroy() {
+      if (this._onCloseDialog) {
+        window.removeEventListener("close-dialog", this._onCloseDialog);
+      }
+    },
+    close() {
+      if (this.$el && typeof this.$el.close === "function") {
+        try {
+          this.$el.close();
+        } catch (_err) {
+          // Ignore if already closed
+        }
+      }
+    },
+  }));
+
   // Live stage timer component
   Alpine.data("timer", () => ({
     text: "",

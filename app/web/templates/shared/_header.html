@@ -12,5 +12,12 @@
       aria-label="Search candidates"
     >
   </div>
-  <button type="button" class="btn-round" disabled aria-label="Add candidate">+</button>
+  <button
+    type="button"
+    class="btn-round"
+    hx-get="/ui/candidates/new"
+    hx-target="#dialog"
+    hx-swap="innerHTML"
+    aria-label="Add candidate"
+  >+</button>
 </header>

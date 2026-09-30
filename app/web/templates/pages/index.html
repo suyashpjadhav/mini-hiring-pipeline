@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero-section">
-  <p class="hero-text">{{ job_title }} &middot; {{ total }} candidates</p>
-</div>
+  {% include "board/_board.html" %}
+  <div id="dialog"></div>
 {% endblock %}

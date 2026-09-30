@@ -1,0 +1,43 @@
+<article class="card candidate-card" data-id="{{ candidate.id }}">
+  <div class="card-header">
+    <span class="card-name" data-id="{{ candidate.id }}">{{ candidate.full_name }}</span>
+    {% if candidate.email %}
+      <span class="card-email">{{ candidate.email }}</span>
+    {% endif %}
+  </div>
+
+  <div class="card-meta">
+    <span class="badge {{ candidate | card_badge_class }}">{{ candidate | card_badge_text(now) }}</span>
+  </div>
+
+  {% if candidate.status.value == "active" %}
+    {% set next_stage_name = "" %}
+    {% if candidate.stage.value == "Applied" %}
+      {% set next_stage_name = "Screening" %}
+    {% elif candidate.stage.value == "Screening" %}
+      {% set next_stage_name = "Interview" %}
+    {% elif candidate.stage.value == "Interview" %}
+      {% set next_stage_name = "Offer" %}
+    {% elif candidate.stage.value == "Offer" %}
+      {% set next_stage_name = "Hired" %}
+    {% endif %}
+
+    <div class="card-actions">
+      <form hx-post="/ui/candidates/{{ candidate.id }}/advance" hx-target="#board" hx-swap="outerHTML" class="action-form">
+        <input type="hidden" name="expected_version" value="{{ candidate.version }}">
+        <button type="submit" class="btn-round" aria-label="Advance {{ candidate.full_name }} to {{ next_stage_name }}">&rarr;</button>
+      </form>
+
+      <div x-data="confirmReject" class="reject-container">
+        <button type="button" class="btn-pill" x-on:click="toggle">Reject</button>
+        <div x-show="showing" class="confirm-panel">
+          <form hx-post="/ui/candidates/{{ candidate.id }}/reject" hx-target="#board" hx-swap="outerHTML" class="action-form">
+            <input type="hidden" name="expected_version" value="{{ candidate.version }}">
+            <button type="submit" class="btn-pill btn-reject">Yes, reject</button>
+          </form>
+          <button type="button" class="btn-pill" x-on:click="close">Cancel</button>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</article>
