@@ -6,8 +6,9 @@ from pydantic import SecretStr, ValidationError
 from app.core.config import Settings
 
 
-def test_settings_defaults() -> None:
+def test_settings_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test default values of Settings."""
+    monkeypatch.delenv("DATABASE_URL", raising=False)
     settings = Settings()
     assert settings.app_env == "dev"
     assert settings.debug is False
