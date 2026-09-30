@@ -58,13 +58,31 @@ document.addEventListener("alpine:init", () => {
   // Modal dialog component
   Alpine.data("modal", () => ({
     init() {
-      if (this.$el && typeof this.$el.showModal === "function") {
+      const dialog =
+        (this.$refs && this.$refs.dialog) ||
+        (this.$el && typeof this.$el.showModal === "function" ? this.$el : null);
+
+      if (dialog && typeof dialog.showModal === "function") {
         try {
-          this.$el.showModal();
+          dialog.showModal();
         } catch (_err) {
           // Ignore if already open
         }
       }
+
+      if (dialog && typeof dialog.addEventListener === "function") {
+        dialog.addEventListener(
+          "close",
+          () => {
+            const container = document.getElementById("dialog");
+            if (container) {
+              container.innerHTML = "";
+            }
+          },
+          { once: true }
+        );
+      }
+
       this._onCloseDialog = () => this.close();
       window.addEventListener("close-dialog", this._onCloseDialog);
     },
@@ -74,9 +92,12 @@ document.addEventListener("alpine:init", () => {
       }
     },
     close() {
-      if (this.$el && typeof this.$el.close === "function") {
+      const dialog =
+        (this.$refs && this.$refs.dialog) ||
+        (this.$el && typeof this.$el.close === "function" ? this.$el : null);
+      if (dialog && typeof dialog.close === "function") {
         try {
-          this.$el.close();
+          dialog.close();
         } catch (_err) {
           // Ignore if already closed
         }

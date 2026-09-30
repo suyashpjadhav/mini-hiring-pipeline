@@ -63,6 +63,26 @@ def test_add_candidate_success_and_validation_errors(client: TestClient) -> None
     assert triggers.get("toast", {}).get("kind") == "success"
 
 
+def test_dialog_cancel_button_attributes(client: TestClient) -> None:
+    """Verify dialog element has x-ref="dialog" and Cancel button has type="button"."""
+    res = client.get("/ui/candidates/new")
+    assert res.status_code == 200
+
+    soup = BeautifulSoup(res.text, "html.parser")
+    dialog = soup.find("dialog")
+    assert dialog is not None
+    assert dialog.get("x-ref") == "dialog"
+
+    cancel_btn = None
+    for btn in dialog.find_all("button"):
+        if btn.text.strip() == "Cancel":
+            cancel_btn = btn
+            break
+
+    assert cancel_btn is not None
+    assert cancel_btn.get("type") == "button"
+
+
 def test_advance_and_reject_actions(client: TestClient) -> None:
     """Verify POST advance and reject routes update board and issue toasts."""
     assert isinstance(client.app, FastAPI)

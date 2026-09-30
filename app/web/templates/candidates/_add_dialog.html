@@ -1,4 +1,4 @@
-<dialog class="add-candidate-dialog" x-data="modal">
+<dialog class="add-candidate-dialog" x-data="modal" x-ref="dialog">
   <div class="dialog-content">
     <h2 class="dialog-title">Add Candidate</h2>
     <form hx-post="/ui/candidates" hx-target="#board" hx-swap="outerHTML" class="dialog-form">

@@ -8,105 +8,107 @@
 
 <div id="board" class="board-container">
   <!-- Stage Bar Navigation -->
-  <nav class="stage-bar-nav" aria-label="Pipeline stages">
-    <div class="stage-bar">
-      <!-- All -->
-      <a href="/?view=all"
-         hx-get="/ui/board?view=all"
-         hx-target="#board"
-         hx-swap="outerHTML"
-         hx-push-url="/?view=all"
-         class="stage-bar-item{% if current_view == 'all' %} is-active{% endif %}"
-         {% if current_view == 'all' %}aria-current="page"{% endif %}>
-        <span class="stage-name">All</span>
-        <span class="stage-count">{{ total or 0 }}</span>
-      </a>
+  <div class="stage-bar-wrapper">
+    <nav class="stage-bar-nav" aria-label="Pipeline stages">
+      <div class="stage-bar">
+        <!-- All -->
+        <a href="/?view=all"
+           hx-get="/ui/board?view=all"
+           hx-target="#board"
+           hx-swap="outerHTML"
+           hx-push-url="/?view=all"
+           class="stage-bar-item{% if current_view == 'all' %} is-active{% endif %}"
+           {% if current_view == 'all' %}aria-current="page"{% endif %}>
+          <span class="stage-name">All</span>
+          <span class="stage-count">{{ total or 0 }}</span>
+        </a>
 
-      <span class="stage-separator" aria-hidden="true">&middot;</span>
+        <span class="stage-separator" aria-hidden="true">&middot;</span>
 
-      <!-- Applied -->
-      <a href="/?view=Applied"
-         hx-get="/ui/board?view=Applied"
-         hx-target="#board"
-         hx-swap="outerHTML"
-         hx-push-url="/?view=Applied"
-         class="stage-bar-item{% if current_view == 'Applied' %} is-active{% endif %}"
-         {% if current_view == 'Applied' %}aria-current="page"{% endif %}>
-        <span class="stage-name">Applied</span>
-        <span class="stage-count">{{ applied_list | length }}</span>
-      </a>
+        <!-- Applied -->
+        <a href="/?view=Applied"
+           hx-get="/ui/board?view=Applied"
+           hx-target="#board"
+           hx-swap="outerHTML"
+           hx-push-url="/?view=Applied"
+           class="stage-bar-item{% if current_view == 'Applied' %} is-active{% endif %}"
+           {% if current_view == 'Applied' %}aria-current="page"{% endif %}>
+          <span class="stage-name">Applied</span>
+          <span class="stage-count">{{ applied_list | length }}</span>
+        </a>
 
-      <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
+        <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
 
-      <!-- Screening -->
-      <a href="/?view=Screening"
-         hx-get="/ui/board?view=Screening"
-         hx-target="#board"
-         hx-swap="outerHTML"
-         hx-push-url="/?view=Screening"
-         class="stage-bar-item{% if current_view == 'Screening' %} is-active{% endif %}"
-         {% if current_view == 'Screening' %}aria-current="page"{% endif %}>
-        <span class="stage-name">Screening</span>
-        <span class="stage-count">{{ screening_list | length }}</span>
-      </a>
+        <!-- Screening -->
+        <a href="/?view=Screening"
+           hx-get="/ui/board?view=Screening"
+           hx-target="#board"
+           hx-swap="outerHTML"
+           hx-push-url="/?view=Screening"
+           class="stage-bar-item{% if current_view == 'Screening' %} is-active{% endif %}"
+           {% if current_view == 'Screening' %}aria-current="page"{% endif %}>
+          <span class="stage-name">Screening</span>
+          <span class="stage-count">{{ screening_list | length }}</span>
+        </a>
 
-      <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
+        <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
 
-      <!-- Interview -->
-      <a href="/?view=Interview"
-         hx-get="/ui/board?view=Interview"
-         hx-target="#board"
-         hx-swap="outerHTML"
-         hx-push-url="/?view=Interview"
-         class="stage-bar-item{% if current_view == 'Interview' %} is-active{% endif %}"
-         {% if current_view == 'Interview' %}aria-current="page"{% endif %}>
-        <span class="stage-name">Interview</span>
-        <span class="stage-count">{{ interview_list | length }}</span>
-      </a>
+        <!-- Interview -->
+        <a href="/?view=Interview"
+           hx-get="/ui/board?view=Interview"
+           hx-target="#board"
+           hx-swap="outerHTML"
+           hx-push-url="/?view=Interview"
+           class="stage-bar-item{% if current_view == 'Interview' %} is-active{% endif %}"
+           {% if current_view == 'Interview' %}aria-current="page"{% endif %}>
+          <span class="stage-name">Interview</span>
+          <span class="stage-count">{{ interview_list | length }}</span>
+        </a>
 
-      <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
+        <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
 
-      <!-- Offer -->
-      <a href="/?view=Offer"
-         hx-get="/ui/board?view=Offer"
-         hx-target="#board"
-         hx-swap="outerHTML"
-         hx-push-url="/?view=Offer"
-         class="stage-bar-item{% if current_view == 'Offer' %} is-active{% endif %}"
-         {% if current_view == 'Offer' %}aria-current="page"{% endif %}>
-        <span class="stage-name">Offer</span>
-        <span class="stage-count">{{ offer_list | length }}</span>
-      </a>
+        <!-- Offer -->
+        <a href="/?view=Offer"
+           hx-get="/ui/board?view=Offer"
+           hx-target="#board"
+           hx-swap="outerHTML"
+           hx-push-url="/?view=Offer"
+           class="stage-bar-item{% if current_view == 'Offer' %} is-active{% endif %}"
+           {% if current_view == 'Offer' %}aria-current="page"{% endif %}>
+          <span class="stage-name">Offer</span>
+          <span class="stage-count">{{ offer_list | length }}</span>
+        </a>
 
-      <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
+        <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
 
-      <!-- Hired -->
-      <a href="/?view=Hired"
-         hx-get="/ui/board?view=Hired"
-         hx-target="#board"
-         hx-swap="outerHTML"
-         hx-push-url="/?view=Hired"
-         class="stage-bar-item{% if current_view == 'Hired' %} is-active{% endif %}"
-         {% if current_view == 'Hired' %}aria-current="page"{% endif %}>
-        <span class="stage-name">Hired</span>
-        <span class="stage-count">{{ hired_list | length }}</span>
-      </a>
+        <!-- Hired -->
+        <a href="/?view=Hired"
+           hx-get="/ui/board?view=Hired"
+           hx-target="#board"
+           hx-swap="outerHTML"
+           hx-push-url="/?view=Hired"
+           class="stage-bar-item{% if current_view == 'Hired' %} is-active{% endif %}"
+           {% if current_view == 'Hired' %}aria-current="page"{% endif %}>
+          <span class="stage-name">Hired</span>
+          <span class="stage-count">{{ hired_list | length }}</span>
+        </a>
 
-      <span class="stage-divider" aria-hidden="true"></span>
+        <span class="stage-divider" aria-hidden="true"></span>
 
-      <!-- Rejected -->
-      <a href="/?view=Rejected"
-         hx-get="/ui/board?view=Rejected"
-         hx-target="#board"
-         hx-swap="outerHTML"
-         hx-push-url="/?view=Rejected"
-         class="stage-bar-item stage-item-rejected{% if current_view == 'Rejected' %} is-active{% endif %}"
-         {% if current_view == 'Rejected' %}aria-current="page"{% endif %}>
-        <span class="stage-name">Rejected</span>
-        <span class="stage-count">{{ rejected_list | length }}</span>
-      </a>
-    </div>
-  </nav>
+        <!-- Rejected -->
+        <a href="/?view=Rejected"
+           hx-get="/ui/board?view=Rejected"
+           hx-target="#board"
+           hx-swap="outerHTML"
+           hx-push-url="/?view=Rejected"
+           class="stage-bar-item stage-item-rejected{% if current_view == 'Rejected' %} is-active{% endif %}"
+           {% if current_view == 'Rejected' %}aria-current="page"{% endif %}>
+          <span class="stage-name">Rejected</span>
+          <span class="stage-count">{{ rejected_list | length }}</span>
+        </a>
+      </div>
+    </nav>
+  </div>
 
   <!-- Main Panel -->
   <div class="board-panel">

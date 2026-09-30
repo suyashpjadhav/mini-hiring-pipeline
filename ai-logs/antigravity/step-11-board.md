@@ -319,3 +319,19 @@ Updated SYSTEM_DESIGN.md §13.2 Board spec to match top stage bar and stacked/si
   - Candidate creation (`POST /ui/candidates`) always re-renders `view=all` with `HX-Push-Url: /?view=all`.
 - **Issues hit and fixes:** None. All web and core quality gates passed cleanly.
 
+## Fix: stage bar centring + Cancel
+- **Summary:** Centred and fit-to-content stage bar pill nav, fixed modal dialog Cancel button closing and container DOM cleanup, and added test assertions for dialog attributes.
+- **Files changed:**
+  - `SYSTEM_DESIGN.md`
+  - `app/web/static/css/app.css`
+  - `app/web/static/js/app.js`
+  - `app/web/templates/board/_board.html`
+  - `app/web/templates/candidates/_add_dialog.html`
+  - `tests/web/test_web_candidates.py`
+  - `ai-logs/antigravity/step-11-board.md`
+- **Decisions:**
+  - Wrapped stage bar in `.stage-bar-wrapper` (`display: flex; justify-content: center;`) with `fit-content` width and horizontal scroll on overflow.
+  - Added `x-ref="dialog"` to `<dialog>` and updated `modal` component in `app.js` to call `this.$refs.dialog.close()`, attaching a one-time native `close` event listener that empties `#dialog` container DOM.
+- **Issues hit and fixes:** Resolved dialog Cancel button closing issue by targeting explicit `$refs.dialog` reference and clearing container on close.
+
+
