@@ -1,0 +1,75 @@
+/* Self-hosted fonts with font-display: swap */
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/static/fonts/cormorant-garamond-500.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/static/fonts/cormorant-garamond-600.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/static/fonts/poppins-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/static/fonts/poppins-500.woff2") format("woff2");
+}
+
+/* SYSTEM_DESIGN §13.1 Design Tokens */
+:root {
+  /* Palette */
+  --bg: #E7E3DC;
+  --surface: #F3F0EA;
+  --glass: rgba(255, 255, 255, 0.55);
+  --ink: #1E1C19;
+  --muted: #6E675E;
+  --clay: #C9B79E;
+  --sand: #DCCFBC;
+  --line: #D4CDC2;
+  --taupe: #8E8579;
+  --ink-button: #1E1C19;
+  --focus: #8E6F4E;
+
+  /* Status Colors */
+  --status-sage: #7C9A7E;
+  --status-ochre: #C49A4A;
+  --status-terracotta: #B5654A;
+  --status-rejected: #8A8580;
+
+  /* Fonts */
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Border Radii */
+  --radius-card: 24px;
+  --radius-pill: 999px;
+  --radius-dialog: 28px;
+
+  /* Shadows */
+  --shadow-card: 0 8px 24px rgba(30, 28, 25, 0.08);
+
+  /* Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+}

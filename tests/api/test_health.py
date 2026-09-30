@@ -27,5 +27,5 @@ def test_index_page_endpoint() -> None:
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
-    assert "<title>Mini Hiring Pipeline</title>" in response.text
-    assert "<script" not in response.text.lower()
+    assert "<script>" not in response.text.lower()
+    assert "/static/vendor/htmx.min.js" in response.text

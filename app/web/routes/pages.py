@@ -1,26 +1,30 @@
-"""Web page view routes."""
+"""Web page view routes (SYSTEM_DESIGN §10.2)."""
 
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
+
+from app.features.pipeline.service import PipelineService
+from app.web.deps import get_pipeline_service
+from app.web.render import render
 
 router = APIRouter(tags=["pages"])
 
 
 @router.get("/", response_class=HTMLResponse)
-def index_page() -> HTMLResponse:
-    """Render placeholder index page."""
-    html_content = (
-        "<!DOCTYPE html>\n"
-        '<html lang="en">\n'
-        "<head>\n"
-        '  <meta charset="UTF-8">\n'
-        '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-        "  <title>Mini Hiring Pipeline</title>\n"
-        "</head>\n"
-        "<body>\n"
-        "  <h1>Mini Hiring Pipeline</h1>\n"
-        "  <p>Scaffold ready</p>\n"
-        "</body>\n"
-        "</html>\n"
+def index_page(
+    request: Request,
+    service: Annotated[PipelineService, Depends(get_pipeline_service)],
+) -> HTMLResponse:
+    """Render index page shell."""
+    board = service.board()
+    total = (
+        len(board.applied)
+        + len(board.screening)
+        + len(board.interview)
+        + len(board.offer)
+        + len(board.hired)
+        + len(board.rejected)
     )
-    return HTMLResponse(content=html_content)
+    return render(request, "pages/index.html", {"total": total})

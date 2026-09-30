@@ -4,6 +4,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from app.api.errors import register_error_handlers
 from app.api.v1.candidates import router as candidates_router
@@ -12,6 +13,7 @@ from app.core.clock import Clock, SystemClock
 from app.core.config import Settings, get_settings
 from app.core.db import create_engine_for, run_migrations
 from app.core.logging import configure_logging
+from app.core.security import add_security_middleware
 from app.web.routes.pages import router as pages_router
 
 
@@ -43,7 +45,10 @@ def create_app(
     app.state.clock = app_clock
     app.state.engine = engine
 
+    app.mount("/static", StaticFiles(directory="app/web/static"), name="static")
+
     register_error_handlers(app)
+    add_security_middleware(app, app_settings)
 
     app.include_router(health_router)
     app.include_router(candidates_router)

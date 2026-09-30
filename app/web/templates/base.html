@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="htmx-config" content='{"includeIndicatorStyles":false,"allowEval":false,"allowScriptTags":false,"selfRequestsOnly":true}'>
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% block title %}Mini Hiring Pipeline{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/tokens.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="/static/vendor/htmx.min.js" defer></script>
+  <script src="/static/js/app.js" defer></script>
+  <script src="/static/vendor/alpine-csp.min.js" defer></script>
+</head>
+<body>
+  {% include "shared/_header.html" %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <div x-data="toasts" aria-live="polite" class="toast-stack">
+    <template x-for="item in items" x-bind:key="item.id">
+      <div class="toast" x-bind:data-id="item.id">
+        <span x-text="item.message"></span>
+        <button type="button" class="toast-close" x-on:click="dismiss" aria-label="Close">&times;</button>
+      </div>
+    </template>
+  </div>
+</body>
+</html>

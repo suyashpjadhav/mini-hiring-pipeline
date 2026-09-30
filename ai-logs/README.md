@@ -32,6 +32,7 @@ All AI assistance used to build this project, kept as raw as possible.
 | antigravity/step-06-scaffold.md | 6 | Scaffold app, core infra, quality gates, CI |
 | antigravity/step-07-domain.md | 7 | Pure domain models (events, projection, hash chain) and unit/property tests |
 | antigravity/step-08-persistence.md | 8 | Event store, db-enforced immutability, Alembic migration, PipelineService |
+| antigravity/step-10-theme-security.md | 10 | Design tokens, base layout shell, double-submit CSRF, strict CSP and security headers middleware |
 
 
 
