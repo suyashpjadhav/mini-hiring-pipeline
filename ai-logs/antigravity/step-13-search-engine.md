@@ -85,4 +85,118 @@ Skipped IDs (deferred): `power-1`, `power-2`, `inv-9-on`, `inv-10-on`, `llm-1`, 
 - `xqzt`: 400 response with error `NOT_UNDERSTOOD` ("No names resemble 'xqzt' and it isn't a filter I recognise...") and warning `LLM_UNAVAILABLE`.
 
 ## Raw transcript
-<!-- PENDING HUMAN COPY -->
+<!-- # ROLE
+Principal Search Engineer (deterministic query understanding, typed ASTs, fuzzy matching, ranking) + Senior Python engineer.
+You implement a written spec exactly, test-first, and never bend the answer key to fit the code.
+
+# CONTEXT (read by explicit path)
+@docs/SEARCH_SPEC.md: ALL sections (the binding spec: §2 normalization, §3 lexicon, §4 patterns, §5 time grammar, §6 confidence,
+§7 clause SQL, §8 validator catalog, §9 fuzzy, §10 ranking/reasons/chips, §11 response)
+@SYSTEM_DESIGN.md §2.1 (binding decisions), §11, §15 (boundaries) · @docs/SEED_DATA.md §2 · @tests/evals/queries.jsonl · @docs/TEST_PLAN.md (Step 13 rows)
+Reuse: `app/core/text.normalize_name`, `app/core/timeutil`, `app/core/tables.py`, `app/core/db.read_tx`, and `scripts/seed.seed_database`.
+
+# OBJECTIVE
+FR-7 and FR-8: one search box that answers the brief's queries, combines them, ranks the best matches first, and explains nonsense queries.
+The rules path only: NO LLM in this step.
+
+# BUILD, IN ORDER (each module with unit tests)
+1. `search/engine/ast.py`: QueryAST exactly as in SYSTEM_DESIGN §11.2 (incl. `at_stage`, and op gt/gte/lt/lte).
+2. `search/parser/normalize.py` + `lexicon.py` (§2, §3). Normalize reuses `normalize_name` where compatible.
+3. `search/parser/time_phrases.py` (§5; `now` and `tz` are injected; the parser never reads a clock).
+4. `search/engine/fuzzy.py` (§9 EXACTLY: exact 1.0 · prefix 0.92 · fuzzy = 0.90 × max(DL_norm, JW), with the edit budget, order bonus +0.03 and threshold 0.75).
+   Name index: build it per search from the DB (fine at this scale; note the scale path in a docstring).
+5. `search/parser/rule_parser.py` (§4 ordered patterns + §6 confidence: unexplained tokens → NOT_UNDERSTOOD + LLM_UNAVAILABLE).
+   **CUT (deferred): the power tokens** (`stage:`, `status:`, `days>`, `since:`).
+6. `search/engine/validator.py` (§8: every code, with the exact message templates).
+7. `search/repo.py` (§7: AST → SQLAlchemy Core with bound parameters; read-only; the only SQL in search).
+8. `search/engine/ranker.py` + `explain.py` (§10: primary keys, tie-breaks, `1 − i/n`, per-term name reasons, chips).
+9. `search/service.py` (`SearchService(engine, clock).search(q, tz) -> SearchResponse`), including the EMPTY_RESULT counterfactual
+   (drop one clause at a time and report the best count) and the INCLUDE_PENDING hint.
+   Then `GET /api/v1/search?q=&tz=` in `app/api/v1/search.py` (thin; empty q or > 200 chars → 400).
+- search imports pipeline ONLY via `app.features.pipeline` (export Stage and Status there if needed). Keep parser/ and engine/ pure.
+
+# GOLDEN TEST: tests/integration/test_search_golden.py (the acceptance gate)
+- Seed a FILE DB under tmp_path with `seed_database(..., now=NOW_A, tz=Asia/Kolkata)` and map candidate ids → seed keys.
+- For every queries.jsonl line with `llm == "off"` and category != "power": assert the route, the AST (equal after normalization),
+  the ORDERED `result_keys`, and the error/warning/hint codes; and check that every reason matches a §10 template (regex).
+- Skip `llm == "on"` and "power" lines with explicit reasons ("LLM fallback deferred", "power tokens deferred") and list the skipped ids.
+- **If a case fails: fix the CODE. NEVER edit queries.jsonl, SEED_DATA.md or SEARCH_SPEC.md to make a test pass.**
+  If you believe the answer key is wrong, STOP that case, write `DISAGREE: <id> expected X, spec §N implies Y, because …`, and continue with the others.
+
+# VERIFY EVERYTHING YOURSELF (terminal + browser/HTTP)
+1. `uv run python -m scripts.check` → all PASS.
+2. `uv run pytest tests/integration/test_search_golden.py -vv`: the pass/skip counts, and the list of skipped ids.
+3. Run `uv run python -m scripts.seed --reset`, start the server in the background, then run these with `Invoke-RestMethod "http://127.0.0.1:8000/api/v1/search?q=<q>&tz=Asia/Kolkata"`:
+
+   | q | Expected |
+   |---|---|
+   | `sharam` | Priya Sharma first, with reasons |
+   | `stuck in screening for more than a week` | the 3 stuck candidates, longest first |
+   | `priya moved to interview since monday` | Priya Sharma |
+   | `stuck in hired` | FINAL_STAGE_STUCK |
+   | `xqzt` | NOT_UNDERSTOOD |
+
+   Show each response's result names + codes, then stop the server.
+4. The import-linter contracts are still KEPT.
+
+# COMMIT (ONLY if 1–4 all pass with zero unexpected golden failures)
+`git add -A`, `git commit -m "feat(search): parser, validator, repo, ranking, explanations + golden test"`, `git push`.
+If anything fails or any DISAGREE is open: do NOT commit; report instead.
+Write `ai-logs/antigravity/step-13-search-engine.md` (template) and append its index row before committing.
+
+# REPORT
+The check summary, the golden pass/skip counts, any DISAGREE lines, the 5 API results, and the commit hash (or the reason for not committing).
+6:49 PM
+Quality Gate Check Summary (python -m scripts.check)
+text
+========================================
+QUALITY GATE SUMMARY
+========================================
+ruff check                [PASS]
+ruff format --check       [PASS]
+mypy                      [PASS]
+lint-imports              [PASS] (3 kept, 0 broken)
+pytest                    [PASS] (154 passed, 8 skipped)
+secret scan               [PASS]
+eval gate                 [SKIP]
+========================================
+Golden Integration Test Summary (tests/integration/test_search_golden.py)
+Passed: 47 cases (100% of active test cases)
+Skipped: 8 cases
+Skipped IDs:
+power-1 ("power tokens deferred")
+power-2 ("power tokens deferred")
+inv-9-on ("LLM fallback deferred")
+inv-10-on ("LLM fallback deferred")
+llm-1 ("LLM fallback deferred")
+llm-2 ("LLM fallback deferred")
+inj-1-on ("LLM fallback deferred")
+inj-2-on ("LLM fallback deferred")
+DISAGREE Lines
+None. Zero specification or golden dataset modifications were required.
+
+API Verification Results (GET /api/v1/search?q=<q>&tz=Asia/Kolkata)
+Query (q)	HTTP Status	Top Result Names / Response Codes	Reasons / Messages
+sharam	200 OK	1. Priya Sharma (0.87)
+2. Priyanka Sharma (0.87)
+3. Riya Sharman (0.84)	Name ≈ "sharam" → Sharma (1 edit)
+stuck in screening for more than a week	200 OK	1. Rohan Mehta (14 days)
+2. Kavya Reddy (12 days)
+3. Aarav Patel (8 days)	Longest waiting candidates ranked first
+priya moved to interview since monday	200 OK	1. Priya Sharma	Name: "priya" = Priya, Moved to Interview on Tue 29 Sep 2026, 03:01 IST
+stuck in hired	400 Bad Request	errors: ["FINAL_STAGE_STUCK"]	"Hired is a final outcome — candidates can't be stuck there."
+xqzt	400 Bad Request	errors: ["NOT_UNDERSTOOD"]
+warnings: ["LLM_UNAVAILABLE"]	"No names resemble 'xqzt' and it isn't a filter I recognise. Try: 'in interview', 'stuck in screening for more than a week'."
+Commit & Push Information
+Commit Hash: bf04d4d
+Commit Message: feat(search): parser, validator, repo, ranking, explanations + golden test
+Documentation Updated: Log file 
+
+ai-logs/antigravity/step-13-search-engine.md
+ created and indexed in 
+
+ai-logs/README.md
+. Step 13 marked COMPLETED in 
+
+IMPLEMENTATION_PLAN.md
+. -->
