@@ -55,4 +55,10 @@ Type is either `Decision` or `Disagreement with AI`.
 - **Why:** Six columns didn't fit below ~1440px without sideways scrolling, and they gave Hired and Rejected the same weight as the active stages. A sidebar costs horizontal space the cards need. The stage bar reads left-to-right like the pipeline itself, shows every count at a glance, lets the recruiter jump straight to one stage (with a shareable URL), and the All view still shows the complete grouping the brief asks for.
 - **Evidence:** commit "feat(web): top stage bar with grouped All view"; tests in tests/web/test_web_board.py
 
+## D-008 · Decision · Cut the LLM fallback and power tokens under the deadline
+- **Context:** With ~12 hours left, the remaining plan (search, search UI, LLM fallback, evals, docs, PDF, video) exceeded the time available.
+- **AI suggestion:** The plan included a Gemini-based LLM fallback that translates unclear queries into the same validated query AST, plus power tokens (`stage:`, `days>7`).
+- **My decision:** Ship search fully deterministic (rules → validated AST → SQL → fuzzy ranking → explanations). Keep the LLM seam (the `LLM_UNAVAILABLE` warning marks queries the rules couldn't map) but don't enable a model. Cut power tokens.
+- **Why:** The brief is judged on correct, explainable results for the recruiter's queries. Every brief query is handled by the rules, and a half-tested LLM path would add risk without improving them. The fallback is fully specified, so enabling it is a contained next step.
+- **Evidence:** docs/SEARCH_SPEC.md §12 (LLM fallback contract); docs/EVAL_REPORT.md (skipped `llm=on`/power cases); tests/evals/queries.jsonl
 
