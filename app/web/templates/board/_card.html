@@ -1,6 +1,6 @@
 <article class="card candidate-card" data-id="{{ candidate.id }}">
   <div class="card-header">
-    <span class="card-name" data-id="{{ candidate.id }}">{{ candidate.full_name }}</span>
+    <button type="button" class="card-name" hx-get="/ui/candidates/{{ candidate.id }}" hx-target="#drawer" hx-swap="innerHTML" aria-label="Open history for {{ candidate.full_name }}">{{ candidate.full_name }}</button>
     {% if candidate.email %}
       <span class="card-email">{{ candidate.email }}</span>
     {% endif %}

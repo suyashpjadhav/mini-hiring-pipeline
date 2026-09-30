@@ -1,0 +1,78 @@
+<div class="drawer-backdrop" hx-get="/ui/drawer/close" hx-target="#drawer" hx-swap="innerHTML"></div>
+<aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <div class="drawer-header">
+    <div class="drawer-title-group">
+      <h2 id="drawer-title" class="drawer-name">{{ detail.candidate.full_name }}</h2>
+      {% if detail.candidate.email %}
+        <p class="drawer-email">{{ detail.candidate.email }}</p>
+      {% endif %}
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" hx-get="/ui/drawer/close" hx-target="#drawer" hx-swap="innerHTML">&times;</button>
+  </div>
+
+  <div class="drawer-status-bar">
+    {% if detail.candidate.status.value == "active" %}
+      <span class="badge {{ detail.candidate | card_badge_class }}" x-data="timer" data-since="{{ (detail.candidate.stage_entered_at.timestamp() * 1000) | int }}">
+        In stage <span x-text="text">{{ detail.candidate | card_badge_text }}</span>
+      </span>
+    {% else %}
+      <span class="badge {{ detail.candidate | card_badge_class }}">
+        {{ detail.candidate | card_badge_text }}
+      </span>
+    {% endif %}
+
+    {% if detail.chain_valid %}
+      <div class="chain-badge chain-valid" title="SHA-256 hash chain verified">
+        <span class="badge-icon">&check;</span> History verified
+      </div>
+    {% else %}
+      <div class="chain-badge chain-invalid" title="Hash chain broken">
+        <span class="badge-icon">&excl;</span> Chain broken
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="drawer-section">
+    <h3 class="section-title">Audit Timeline</h3>
+    <ol class="timeline">
+      {% for event in detail.events %}
+        <li class="timeline-item timeline-type-{{ event.type.value if event.type.value is defined else event.type }}">
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-desc">{{ event | format_event_description }}</span>
+              <time class="timeline-time">{{ event.occurred_at | format_datetime(tz) }}</time>
+            </div>
+
+            {% if event.time_spent_seconds is not none and event.time_spent_seconds > 0 %}
+              <div class="timeline-meta">
+                <span class="timeline-duration">Time spent: {{ event.time_spent_seconds | format_duration }}</span>
+              </div>
+            {% endif %}
+
+            {% if event.note %}
+              <p class="timeline-note-text">{{ event.note }}</p>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+
+  <div class="drawer-section drawer-add-note">
+    <h3 class="section-title">Add Note</h3>
+    <form hx-post="/ui/candidates/{{ detail.candidate.id }}/notes" hx-target="#drawer" hx-swap="innerHTML" class="note-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="form-group">
+        <label for="drawer-note-input" class="visually-hidden">Note text</label>
+        <textarea id="drawer-note-input" name="note" rows="3" class="form-control" placeholder="Type a note or correction..." required></textarea>
+        {% if note_error %}
+          <p class="form-error">{{ note_error }}</p>
+        {% endif %}
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-pill">Add Note</button>
+      </div>
+    </form>
+  </div>
+</aside>

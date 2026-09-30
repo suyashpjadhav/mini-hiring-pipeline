@@ -6,9 +6,18 @@
 {% set rejected_list = board.rejected if board else [] %}
 {% set current_view = view or 'all' %}
 
-<div id="board" class="board-container">
+<div id="board"
+     class="board-container"
+     hx-get="/ui/board?view={{ current_view }}"
+     hx-trigger="board-refresh from:body"
+     hx-target="#board"
+     hx-swap="outerHTML">
   <!-- Stage Bar Navigation -->
   <div class="stage-bar-wrapper">
+    <div class="board-summary">
+      <p class="summary-text">{{ total or 0 }} candidates &middot; {{ active or 0 }} active</p>
+    </div>
+
     <nav class="stage-bar-nav" aria-label="Pipeline stages">
       <div class="stage-bar">
         <!-- All -->
@@ -112,10 +121,6 @@
 
   <!-- Main Panel -->
   <div class="board-panel">
-    <div class="board-summary">
-      <p class="summary-text">{{ total or 0 }} candidates &middot; {{ active or 0 }} active</p>
-    </div>
-
     {% if current_view == 'all' %}
       <!-- Stacked Sections View (view=all) -->
       <div class="stacked-sections">

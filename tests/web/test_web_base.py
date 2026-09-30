@@ -19,6 +19,14 @@ def test_base_layout_structure(client: TestClient) -> None:
     htmx_meta = soup.find("meta", {"name": "htmx-config"})
     assert htmx_meta is not None
     assert "allowEval" in str(htmx_meta.get("content", ""))
+    assert "disableInheritance" in str(htmx_meta.get("content", ""))
+
+    # Drawer container outside #board check
+    drawer_el = soup.find("div", {"id": "drawer"})
+    assert drawer_el is not None
+    board_el = soup.find("div", {"id": "board"})
+    assert board_el is not None
+    assert drawer_el not in board_el.find_all(True)
 
     # External scripts order check
     scripts = soup.find_all("script")

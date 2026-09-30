@@ -37,7 +37,7 @@ def test_final_outcome_cards_no_buttons(client: TestClient) -> None:
     card_hired = soup.find("article", attrs={"data-id": c_hired.id})
     assert card_hired is not None
     assert card_hired.find_all("form") == []
-    assert card_hired.find_all("button") == []
+    assert card_hired.find("div", class_="card-actions") is None
     badge_hired = card_hired.find("span", class_="badge")
     assert badge_hired is not None
     assert "Hired" in badge_hired.text
@@ -46,7 +46,7 @@ def test_final_outcome_cards_no_buttons(client: TestClient) -> None:
     card_rej = soup.find("article", attrs={"data-id": c_rej.id})
     assert card_rej is not None
     assert card_rej.find_all("form") == []
-    assert card_rej.find_all("button") == []
+    assert card_rej.find("div", class_="card-actions") is None
     badge_rej = card_rej.find("span", class_="badge")
     assert badge_rej is not None
     assert "Rejected at Screening" in badge_rej.text

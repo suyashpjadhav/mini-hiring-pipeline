@@ -1,8 +1,12 @@
-"""Display formatting helpers for duration and badge styling (SYSTEM_DESIGN §13.1)."""
+"""Display formatting helpers for duration, badge styling, and audit events.
+
+SYSTEM_DESIGN §13.1.
+"""
 
 from datetime import UTC, datetime
 from typing import Any
 
+from app.core.timeutil import resolve_tz
 from app.features.pipeline.domain.stages import Status
 
 
@@ -97,3 +101,35 @@ def card_badge_text(candidate: Any, now: datetime | None = None) -> str:
     if dur != "just now":
         return f"Rejected at {stage_name} · {dur} ago"
     return f"Rejected at {stage_name} · just now"
+
+
+def format_datetime(dt: datetime, tz_str: str = "Asia/Kolkata") -> str:
+    """Format datetime in candidate/recruiter timezone."""
+    zone = resolve_tz(tz_str, "Asia/Kolkata")
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=UTC)
+    local_dt = dt.astimezone(zone)
+    return local_dt.strftime("%b %d, %Y %H:%M")
+
+
+def format_event_description(event: Any) -> str:
+    """Return human-readable description for audit timeline event."""
+    ev_type = getattr(event, "type", "")
+    type_str = ev_type.value if hasattr(ev_type, "value") else str(ev_type)
+    from_s = getattr(event, "from_stage", None)
+    to_s = getattr(event, "to_stage", None)
+    from_str = from_s.value if hasattr(from_s, "value") and from_s else str(from_s or "")
+    to_str = to_s.value if hasattr(to_s, "value") and to_s else str(to_s or "")
+
+    if type_str.lower() == "created":
+        return f"Created in {to_str or 'Applied'}"
+    if type_str.lower() == "advanced":
+        if from_str and to_str:
+            return f"Advanced from {from_str} to {to_str}"
+        return f"Advanced to {to_str}"
+    if type_str.lower() == "rejected":
+        return f"Rejected at {from_str or 'stage'}"
+    if type_str.lower() == "note":
+        note_text = getattr(event, "note", "") or ""
+        return f"Note added: {note_text}"
+    return type_str

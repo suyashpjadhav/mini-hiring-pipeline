@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="htmx-config" content='{"includeIndicatorStyles":false,"allowEval":false,"allowScriptTags":false,"selfRequestsOnly":true}'>
+  <meta name="htmx-config" content='{"includeIndicatorStyles":false,"allowEval":false,"allowScriptTags":false,"selfRequestsOnly":true,"disableInheritance":true}'>
   <meta name="csrf-token" content="{{ csrf_token }}">
   <title>{% block title %}Mini Hiring Pipeline{% endblock %}</title>
   <link rel="stylesheet" href="/static/css/tokens.css">
@@ -18,6 +18,9 @@
   <main>
     {% block content %}{% endblock %}
   </main>
+
+  <div id="dialog"></div>
+  <div id="drawer"></div>
 
   <div x-data="toasts" aria-live="polite" class="toast-stack">
     <template x-for="item in items" x-bind:key="item.id">

@@ -13,7 +13,9 @@ from app.web.formatting import (
     card_badge_class,
     card_badge_text,
     duration_class,
+    format_datetime,
     format_duration,
+    format_event_description,
 )
 
 templates = Jinja2Templates(directory="app/web/templates")
@@ -21,11 +23,15 @@ templates.env.globals["format_duration"] = format_duration
 templates.env.globals["duration_class"] = duration_class
 templates.env.globals["card_badge_class"] = card_badge_class
 templates.env.globals["card_badge_text"] = card_badge_text
+templates.env.globals["format_datetime"] = format_datetime
+templates.env.globals["format_event_description"] = format_event_description
 
 templates.env.filters["format_duration"] = format_duration
 templates.env.filters["duration_class"] = duration_class
 templates.env.filters["card_badge_class"] = card_badge_class
 templates.env.filters["card_badge_text"] = card_badge_text
+templates.env.filters["format_datetime"] = format_datetime
+templates.env.filters["format_event_description"] = format_event_description
 
 
 def resolve_request_tz(request: Request, default: str) -> str:

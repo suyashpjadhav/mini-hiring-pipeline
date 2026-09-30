@@ -17,7 +17,6 @@ document.addEventListener("alpine:init", () => {
         }
       };
       window.addEventListener("toast", handler);
-      document.addEventListener("toast", handler);
     },
     add(kind, message) {
       const id = String(Date.now() + Math.random());
@@ -58,10 +57,7 @@ document.addEventListener("alpine:init", () => {
   // Modal dialog component
   Alpine.data("modal", () => ({
     init() {
-      const dialog =
-        (this.$refs && this.$refs.dialog) ||
-        (this.$el && typeof this.$el.showModal === "function" ? this.$el : null);
-
+      const dialog = this.$refs.dialog || this.$el;
       if (dialog && typeof dialog.showModal === "function") {
         try {
           dialog.showModal();
@@ -69,20 +65,6 @@ document.addEventListener("alpine:init", () => {
           // Ignore if already open
         }
       }
-
-      if (dialog && typeof dialog.addEventListener === "function") {
-        dialog.addEventListener(
-          "close",
-          () => {
-            const container = document.getElementById("dialog");
-            if (container) {
-              container.innerHTML = "";
-            }
-          },
-          { once: true }
-        );
-      }
-
       this._onCloseDialog = () => this.close();
       window.addEventListener("close-dialog", this._onCloseDialog);
     },
@@ -92,15 +74,9 @@ document.addEventListener("alpine:init", () => {
       }
     },
     close() {
-      const dialog =
-        (this.$refs && this.$refs.dialog) ||
-        (this.$el && typeof this.$el.close === "function" ? this.$el : null);
-      if (dialog && typeof dialog.close === "function") {
-        try {
-          dialog.close();
-        } catch (_err) {
-          // Ignore if already closed
-        }
+      const container = document.getElementById("dialog");
+      if (container) {
+        container.innerHTML = "";
       }
     },
   }));
@@ -179,3 +155,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Ignore timezone resolution error
   }
 });
+
+// Escape key listener to close candidate drawer
+document.addEventListener("keydown", (evt) => {
+  if (evt.key === "Escape") {
+    const drawerEl = document.getElementById("drawer");
+    if (drawerEl && drawerEl.children.length > 0) {
+      drawerEl.replaceChildren();
+    }
+  }
+});
+

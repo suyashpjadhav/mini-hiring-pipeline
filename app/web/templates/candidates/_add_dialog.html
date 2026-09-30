@@ -34,7 +34,7 @@
       </div>
 
       <div class="dialog-actions">
-        <button type="button" class="btn-pill" x-on:click="close">Cancel</button>
+        <button type="button" class="btn-pill" hx-get="/ui/dialog/close" hx-target="#dialog" hx-swap="innerHTML">Cancel</button>
         <button type="submit" class="btn-pill btn-primary">Add Candidate</button>
       </div>
     </form>

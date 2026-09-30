@@ -1,12 +1,13 @@
 """Web route handlers for candidate management and board updates (SYSTEM_DESIGN §10.2)."""
 
+import json
 from typing import Annotated, Final
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse
 from pydantic import EmailStr, TypeAdapter, ValidationError
 
-from app.features.pipeline.domain.errors import DomainError
+from app.features.pipeline.domain.errors import DomainError, InvalidInputError
 from app.features.pipeline.domain.stages import Action, Stage
 from app.features.pipeline.service import PipelineService
 from app.web.deps import get_pipeline_service
@@ -218,4 +219,113 @@ def reject_candidate_route(
             context,
             toast=("error", err.message),
             status_code=200,
+        )
+
+
+@router.get("/ui/drawer/close", response_class=HTMLResponse)
+def close_drawer_route() -> HTMLResponse:
+    """Close candidate drawer by returning an empty 200 response."""
+    return HTMLResponse(content="", status_code=200)
+
+
+@router.get("/ui/dialog/close", response_class=HTMLResponse)
+def close_dialog_route() -> HTMLResponse:
+    """Close add candidate dialog by returning an empty 200 response."""
+    return HTMLResponse(content="", status_code=200)
+
+
+@router.get("/ui/candidates/{candidate_id}", response_class=HTMLResponse)
+def get_candidate_drawer(
+    candidate_id: str,
+    request: Request,
+    service: Annotated[PipelineService, Depends(get_pipeline_service)],
+) -> HTMLResponse:
+    """Render candidate detail drawer partial into #drawer."""
+    try:
+        detail = service.get_detail(candidate_id)
+        return render(
+            request,
+            "candidates/_drawer.html",
+            {
+                "detail": detail,
+                "note_error": None,
+            },
+        )
+    except DomainError as err:
+        payload = json.dumps({"toast": {"kind": "error", "message": err.message}})
+        return HTMLResponse(
+            content="",
+            status_code=200,
+            headers={"HX-Trigger": payload},
+        )
+
+
+@router.post("/ui/candidates/{candidate_id}/notes", response_class=HTMLResponse)
+def add_candidate_note_route(
+    candidate_id: str,
+    request: Request,
+    service: Annotated[PipelineService, Depends(get_pipeline_service)],
+    note: Annotated[str, Form()] = "",
+) -> HTMLResponse:
+    """Add note correction event to candidate timeline and refresh drawer + board."""
+    clean_note = (note or "").strip()
+    if not clean_note:
+        try:
+            detail = service.get_detail(candidate_id)
+            return render(
+                request,
+                "candidates/_drawer.html",
+                {
+                    "detail": detail,
+                    "note_error": "Note text cannot be empty",
+                },
+                status_code=200,
+            )
+        except DomainError as err:
+            payload = json.dumps({"toast": {"kind": "error", "message": err.message}})
+            return HTMLResponse(
+                content="",
+                status_code=200,
+                headers={"HX-Trigger": payload},
+            )
+
+    try:
+        service.add_note(candidate_id=candidate_id, text=clean_note)
+        detail = service.get_detail(candidate_id)
+        return render(
+            request,
+            "candidates/_drawer.html",
+            {
+                "detail": detail,
+                "note_error": None,
+            },
+            toast=("info", "Note added"),
+            triggers={"board-refresh": ""},
+            status_code=200,
+        )
+    except InvalidInputError as err:
+        try:
+            detail = service.get_detail(candidate_id)
+            return render(
+                request,
+                "candidates/_drawer.html",
+                {
+                    "detail": detail,
+                    "note_error": err.message,
+                },
+                status_code=200,
+            )
+        except DomainError:
+            payload = json.dumps({"toast": {"kind": "error", "message": err.message}})
+            return HTMLResponse(
+                content="",
+                status_code=200,
+                headers={"HX-Trigger": payload},
+            )
+    except DomainError as err:
+        payload = json.dumps({"toast": {"kind": "error", "message": err.message}})
+        return HTMLResponse(
+            content="",
+            status_code=200,
+            headers={"HX-Trigger": payload},
         )
