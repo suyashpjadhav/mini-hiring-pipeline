@@ -4,7 +4,7 @@ An API-first, event-sourced candidate tracking system featuring a deterministic 
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 Prerequisites: Python 3.12+ and [uv](https://docs.astral.sh/uv/).
 
@@ -29,7 +29,7 @@ uv run python -m scripts.check
 
 ---
 
-## 🔍 Try These Searches
+## Try These Searches
 
 The system includes a pre-seeded candidate dataset (`26 candidates`) with a deterministic natural-language search engine. Try typing these queries into the search bar:
 
@@ -47,7 +47,7 @@ The system includes a pre-seeded candidate dataset (`26 candidates`) with a dete
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 - **Event-Sourced Candidate Pipeline:** Tracks candidate progression across 5 linear stages (`Applied` $\rightarrow$ `Screening` $\rightarrow$ `Interview` $\rightarrow$ `Offer` $\rightarrow$ `Hired`) with 3 statuses (`active`, `hired`, `rejected`), live duration timers, and stage bitmasks.
 - **Cryptographic Immutable Audit Trail:** Event store (`stage_events`) computes SHA-256 hash chains. Protected by 5 database triggers that block `UPDATE`, `DELETE`, or illegal stage transitions. Includes a live immutability verification demo script (`uv run python -m scripts.demo_immutability`).
@@ -55,7 +55,7 @@ The system includes a pre-seeded candidate dataset (`26 candidates`) with a dete
 
 ---
 
-## 🏗️ Architecture at a Glance
+## Architecture at a Glance
 
 ```mermaid
 graph TD
@@ -89,7 +89,7 @@ Key highlights (see [docs/ARCHITECTURE.md](file:///c:/Users/BIT/Desktop/Hiring%2
 
 ---
 
-## ⚖️ Architectural Decisions & Rationale
+## Architectural Decisions & Rationale
 
 | Decision ID | Context & Decision | Why & Impact |
 |---|---|---|
@@ -104,7 +104,7 @@ Key highlights (see [docs/ARCHITECTURE.md](file:///c:/Users/BIT/Desktop/Hiring%2
 
 ---
 
-## 📊 Quality & Evaluation Metrics
+## Quality & Evaluation Metrics
 
 The repository enforces strict quality gates on every change via `uv run python -m scripts.check`:
 
@@ -129,14 +129,14 @@ For full benchmark breakdown by category, see [docs/EVAL_REPORT.md](file:///c:/U
 
 ---
 
-## 🤖 AI Assistance & Disagreements
+## AI Assistance & Disagreements
 
 This project was developed with AI pairing:
 - **Design & Specification:** Claude 3.5 Sonnet (system architecture, state machine, search AST spec).
 - **Implementation & Testing:** Antigravity agentic workflow (step-by-step coding, test suite, UI components, eval harness).
 - **Logs & Decision Trail:** Complete transcripts recorded in [ai-logs/](file:///c:/Users/BIT/Desktop/Hiring%20Pipeline/mini-hiring-pipeline/ai-logs/) and key choices logged in [docs/DECISIONS.md](file:///c:/Users/BIT/Desktop/Hiring%20Pipeline/mini-hiring-pipeline/docs/DECISIONS.md).
 
-> 💡 **Where I Disagreed with the AI (Decision D-006):**
+> **Where I Disagreed with the AI (Decision D-006):**
 > 
 > The AI suggested scoring non-name search results by rank position using a linear decrement ($1.0, 0.9, 0.8, \dots$). On a query returning 19 candidates ("everyone except rejected"), this formula resulted in negative scores (down to $-0.8$), breaking the score bar UI element. I rejected the AI proposal, implemented rank normalization $\text{score} = 1 - i/n$, and proved with the oracle script that scores remain strictly within $(0, 1]$ (min $0.05$, max $1.0$).
 > 
@@ -144,7 +144,7 @@ This project was developed with AI pairing:
 
 ---
 
-## ⚠️ Known Limitations
+## Known Limitations
 
 1. **Single Job & Single Recruiter:** System is designed for a single job position without multi-tenant authentication.
 2. **LLM Fallback Cut (D-008):** Unrecognized natural language queries return `NOT_UNDERSTOOD` with an `LLM_UNAVAILABLE` warning seam rather than calling a remote model.
@@ -152,7 +152,7 @@ This project was developed with AI pairing:
 
 ---
 
-## 🔮 Future Enhancements (With More Time)
+## Future Enhancements (With More Time)
 
 1. **Saved Searches & SLA Alerts:** Candidate watchlists for candidates stuck in Screening $>7$ days with automated recruiter notification alerts.
 2. **LLM Fallback Integration:** Enable the remote Gemini LLM fallback seam for complex, conversational edge queries.
@@ -161,7 +161,7 @@ This project was developed with AI pairing:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 mini-hiring-pipeline/
