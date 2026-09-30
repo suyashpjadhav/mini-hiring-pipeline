@@ -53,3 +53,22 @@ Delivered FR-1 to FR-4 in the UI:
 
 ## Raw transcript
 <!-- pasted by the human -->
+
+## Change request: top stage bar
+- **Summary:** Replaced 6-column grid layout with top stage bar navigation + default `view=all` stacked sections or single stage grid `view=<Stage>`.
+- **Files changed:**
+  - `SYSTEM_DESIGN.md`
+  - `docs/DECISIONS.md`
+  - `app/web/routes/candidates.py`
+  - `app/web/routes/pages.py`
+  - `app/web/templates/board/_board.html`
+  - `app/web/templates/board/_card.html`
+  - `app/web/static/css/app.css`
+  - `tests/web/test_web_board.py`
+  - `tests/web/test_web_candidates.py`
+- **Decisions:**
+  - Standardized canonical view names (`all`, `Applied`, `Screening`, `Interview`, `Offer`, `Hired`, `Rejected`) with case-insensitive input normalization and fallback to `all`.
+  - Added hidden `view` input to card Advance and Reject forms so actions preserve current active view.
+  - Candidate creation (`POST /ui/candidates`) always re-renders `view=all` with `HX-Push-Url: /?view=all`.
+- **Issues hit and fixes:** None. All web and core quality gates passed cleanly.
+

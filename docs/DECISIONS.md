@@ -48,3 +48,11 @@ Type is either `Decision` or `Disagreement with AI`.
 - **Why:** The AI's formula goes negative after 10 results. "Everyone except rejected" returns 19 candidates, so the last ones would score −0.8 and break the score bar. `1 − i/n` always stays in (0, 1] for any result count.
 - **Evidence:** The oracle proof on the 19-result query (min 0.05, max 1.0) in ai-logs/antigravity/step-05-seed-and-answer-key.md; docs/SEARCH_SPEC.md §10.
 
+## D-007 · Decision · Top stage bar instead of six board columns
+- **Context:** The recruiter needs to see everyone grouped by stage and move them along, on an ordinary laptop screen.
+- **AI suggestions:** Claude (design doc) proposed six side-by-side Kanban columns; Antigravity proposed a sidebar of stages.
+- **My decision:** A top stage bar (All · Applied › … › Hired | Rejected) with live counts, plus a default "All" view that stacks the stages as sections; Rejected is set apart because it is a status, not a stage.
+- **Why:** Six columns didn't fit below ~1440px without sideways scrolling, and they gave Hired and Rejected the same weight as the active stages. A sidebar costs horizontal space the cards need. The stage bar reads left-to-right like the pipeline itself, shows every count at a glance, lets the recruiter jump straight to one stage (with a shareable URL), and the All view still shows the complete grouping the brief asks for.
+- **Evidence:** commit "feat(web): top stage bar with grouped All view"; tests in tests/web/test_web_board.py
+
+

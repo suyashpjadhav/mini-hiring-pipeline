@@ -7,11 +7,12 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.core.clock import FixedClock
+from app.features.pipeline.domain.stages import Action
 from app.features.pipeline.service import PipelineService
 
 
 def test_add_candidate_success_and_validation_errors(client: TestClient) -> None:
-    """Verify POST /ui/candidates success returns board + triggers + toast,
+    """Verify POST /ui/candidates success returns board + triggers + toast + push url,
     and validation error returns dialog with retarget.
     """
     # Step 1: GET / to obtain CSRF token cookie
@@ -52,6 +53,7 @@ def test_add_candidate_success_and_validation_errors(client: TestClient) -> None
     )
     assert res_success.status_code == 200
     assert "Jane Doe" in res_success.text
+    assert res_success.headers.get("HX-Push-Url") == "/?view=all"
 
     trigger_header = res_success.headers.get("HX-Trigger", "")
     assert trigger_header != ""
@@ -97,6 +99,35 @@ def test_advance_and_reject_actions(client: TestClient) -> None:
     assert res_reject.status_code == 200
     triggers = json.loads(res_reject.headers.get("HX-Trigger", "{}"))
     assert triggers.get("toast", {}).get("message") == "Test Candidate rejected at Screening"
+
+
+def test_action_with_view_parameter_rerenders_same_view(client: TestClient) -> None:
+    """Verify an action with view=Interview re-renders the Interview view."""
+    assert isinstance(client.app, FastAPI)
+    app = client.app
+    clock: FixedClock = app.state.clock
+    service = PipelineService(app.state.engine, clock)
+
+    cand = service.create_candidate("Interview Cand", "cand@example.com")
+    service.transition(cand.id, Action.ADVANCE, expected_version=1)  # Screening
+    service.transition(cand.id, Action.ADVANCE, expected_version=2)  # Interview
+
+    client.get("/")
+    csrf_token = client.cookies.get("csrftoken")
+    headers = {"X-CSRF-Token": csrf_token}
+
+    res = client.post(
+        f"/ui/candidates/{cand.id}/advance",
+        data={"expected_version": 3, "view": "Interview"},
+        headers=headers,
+    )
+    assert res.status_code == 200
+    soup = BeautifulSoup(res.text, "html.parser")
+    sections = soup.find_all("section", class_="board-section")
+    assert len(sections) == 1
+    h2 = sections[0].find("h2")
+    assert h2 is not None
+    assert "Interview · 0" in h2.text
 
 
 def test_stale_expected_version_error_toast(client: TestClient) -> None:

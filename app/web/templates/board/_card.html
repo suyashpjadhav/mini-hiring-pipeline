@@ -24,6 +24,7 @@
 
     <div class="card-actions">
       <form hx-post="/ui/candidates/{{ candidate.id }}/advance" hx-target="#board" hx-swap="outerHTML" class="action-form">
+        <input type="hidden" name="view" value="{{ view or 'all' }}">
         <input type="hidden" name="expected_version" value="{{ candidate.version }}">
         <button type="submit" class="btn-round" aria-label="Advance {{ candidate.full_name }} to {{ next_stage_name }}">&rarr;</button>
       </form>
@@ -32,6 +33,7 @@
         <button type="button" class="btn-pill" x-on:click="toggle">Reject</button>
         <div x-show="showing" class="confirm-panel">
           <form hx-post="/ui/candidates/{{ candidate.id }}/reject" hx-target="#board" hx-swap="outerHTML" class="action-form">
+            <input type="hidden" name="view" value="{{ view or 'all' }}">
             <input type="hidden" name="expected_version" value="{{ candidate.version }}">
             <button type="submit" class="btn-pill btn-reject">Yes, reject</button>
           </form>

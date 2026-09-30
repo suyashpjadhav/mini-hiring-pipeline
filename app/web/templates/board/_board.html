@@ -4,107 +4,233 @@
 {% set offer_list = board.offer if board else [] %}
 {% set hired_list = board.hired if board else [] %}
 {% set rejected_list = board.rejected if board else [] %}
+{% set current_view = view or 'all' %}
 
 <div id="board" class="board-container">
-  <div class="board-summary">
-    <p class="summary-text">{{ total or 0 }} candidates &middot; {{ active or 0 }} active</p>
-  </div>
+  <!-- Stage Bar Navigation -->
+  <nav class="stage-bar-nav" aria-label="Pipeline stages">
+    <div class="stage-bar">
+      <!-- All -->
+      <a href="/?view=all"
+         hx-get="/ui/board?view=all"
+         hx-target="#board"
+         hx-swap="outerHTML"
+         hx-push-url="/?view=all"
+         class="stage-bar-item{% if current_view == 'all' %} is-active{% endif %}"
+         {% if current_view == 'all' %}aria-current="page"{% endif %}>
+        <span class="stage-name">All</span>
+        <span class="stage-count">{{ total or 0 }}</span>
+      </a>
 
-  <div class="board-grid">
-    <!-- Applied -->
-    <section class="board-column" aria-labelledby="col-applied-title">
-      <div class="column-header">
-        <h2 id="col-applied-title" class="column-title">Applied <span class="column-count">({{ applied_list | length }})</span></h2>
-      </div>
-      <div class="column-cards">
-        {% if applied_list %}
-          {% for candidate in applied_list %}
-            {% include "board/_card.html" %}
-          {% endfor %}
-        {% else %}
-          <p class="empty-column">No one here yet</p>
-        {% endif %}
-      </div>
-    </section>
+      <span class="stage-separator" aria-hidden="true">&middot;</span>
 
-    <!-- Screening -->
-    <section class="board-column" aria-labelledby="col-screening-title">
-      <div class="column-header">
-        <h2 id="col-screening-title" class="column-title">Screening <span class="column-count">({{ screening_list | length }})</span></h2>
-      </div>
-      <div class="column-cards">
-        {% if screening_list %}
-          {% for candidate in screening_list %}
-            {% include "board/_card.html" %}
-          {% endfor %}
-        {% else %}
-          <p class="empty-column">No one here yet</p>
-        {% endif %}
-      </div>
-    </section>
+      <!-- Applied -->
+      <a href="/?view=Applied"
+         hx-get="/ui/board?view=Applied"
+         hx-target="#board"
+         hx-swap="outerHTML"
+         hx-push-url="/?view=Applied"
+         class="stage-bar-item{% if current_view == 'Applied' %} is-active{% endif %}"
+         {% if current_view == 'Applied' %}aria-current="page"{% endif %}>
+        <span class="stage-name">Applied</span>
+        <span class="stage-count">{{ applied_list | length }}</span>
+      </a>
 
-    <!-- Interview -->
-    <section class="board-column" aria-labelledby="col-interview-title">
-      <div class="column-header">
-        <h2 id="col-interview-title" class="column-title">Interview <span class="column-count">({{ interview_list | length }})</span></h2>
-      </div>
-      <div class="column-cards">
-        {% if interview_list %}
-          {% for candidate in interview_list %}
-            {% include "board/_card.html" %}
-          {% endfor %}
-        {% else %}
-          <p class="empty-column">No one here yet</p>
-        {% endif %}
-      </div>
-    </section>
+      <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
 
-    <!-- Offer -->
-    <section class="board-column" aria-labelledby="col-offer-title">
-      <div class="column-header">
-        <h2 id="col-offer-title" class="column-title">Offer <span class="column-count">({{ offer_list | length }})</span></h2>
-      </div>
-      <div class="column-cards">
-        {% if offer_list %}
-          {% for candidate in offer_list %}
-            {% include "board/_card.html" %}
-          {% endfor %}
-        {% else %}
-          <p class="empty-column">No one here yet</p>
-        {% endif %}
-      </div>
-    </section>
+      <!-- Screening -->
+      <a href="/?view=Screening"
+         hx-get="/ui/board?view=Screening"
+         hx-target="#board"
+         hx-swap="outerHTML"
+         hx-push-url="/?view=Screening"
+         class="stage-bar-item{% if current_view == 'Screening' %} is-active{% endif %}"
+         {% if current_view == 'Screening' %}aria-current="page"{% endif %}>
+        <span class="stage-name">Screening</span>
+        <span class="stage-count">{{ screening_list | length }}</span>
+      </a>
 
-    <!-- Hired -->
-    <section class="board-column" aria-labelledby="col-hired-title">
-      <div class="column-header">
-        <h2 id="col-hired-title" class="column-title">Hired <span class="column-count">({{ hired_list | length }})</span></h2>
-      </div>
-      <div class="column-cards">
-        {% if hired_list %}
-          {% for candidate in hired_list %}
-            {% include "board/_card.html" %}
-          {% endfor %}
-        {% else %}
-          <p class="empty-column">No one here yet</p>
-        {% endif %}
-      </div>
-    </section>
+      <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
 
-    <!-- Rejected -->
-    <section class="board-column" aria-labelledby="col-rejected-title">
-      <div class="column-header">
-        <h2 id="col-rejected-title" class="column-title">Rejected <span class="column-count">({{ rejected_list | length }})</span></h2>
+      <!-- Interview -->
+      <a href="/?view=Interview"
+         hx-get="/ui/board?view=Interview"
+         hx-target="#board"
+         hx-swap="outerHTML"
+         hx-push-url="/?view=Interview"
+         class="stage-bar-item{% if current_view == 'Interview' %} is-active{% endif %}"
+         {% if current_view == 'Interview' %}aria-current="page"{% endif %}>
+        <span class="stage-name">Interview</span>
+        <span class="stage-count">{{ interview_list | length }}</span>
+      </a>
+
+      <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
+
+      <!-- Offer -->
+      <a href="/?view=Offer"
+         hx-get="/ui/board?view=Offer"
+         hx-target="#board"
+         hx-swap="outerHTML"
+         hx-push-url="/?view=Offer"
+         class="stage-bar-item{% if current_view == 'Offer' %} is-active{% endif %}"
+         {% if current_view == 'Offer' %}aria-current="page"{% endif %}>
+        <span class="stage-name">Offer</span>
+        <span class="stage-count">{{ offer_list | length }}</span>
+      </a>
+
+      <span class="stage-chevron" aria-hidden="true">&rsaquo;</span>
+
+      <!-- Hired -->
+      <a href="/?view=Hired"
+         hx-get="/ui/board?view=Hired"
+         hx-target="#board"
+         hx-swap="outerHTML"
+         hx-push-url="/?view=Hired"
+         class="stage-bar-item{% if current_view == 'Hired' %} is-active{% endif %}"
+         {% if current_view == 'Hired' %}aria-current="page"{% endif %}>
+        <span class="stage-name">Hired</span>
+        <span class="stage-count">{{ hired_list | length }}</span>
+      </a>
+
+      <span class="stage-divider" aria-hidden="true"></span>
+
+      <!-- Rejected -->
+      <a href="/?view=Rejected"
+         hx-get="/ui/board?view=Rejected"
+         hx-target="#board"
+         hx-swap="outerHTML"
+         hx-push-url="/?view=Rejected"
+         class="stage-bar-item stage-item-rejected{% if current_view == 'Rejected' %} is-active{% endif %}"
+         {% if current_view == 'Rejected' %}aria-current="page"{% endif %}>
+        <span class="stage-name">Rejected</span>
+        <span class="stage-count">{{ rejected_list | length }}</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Panel -->
+  <div class="board-panel">
+    <div class="board-summary">
+      <p class="summary-text">{{ total or 0 }} candidates &middot; {{ active or 0 }} active</p>
+    </div>
+
+    {% if current_view == 'all' %}
+      <!-- Stacked Sections View (view=all) -->
+      <div class="stacked-sections">
+        <!-- Applied Section -->
+        <section class="board-section" aria-labelledby="sec-applied-title">
+          <h2 id="sec-applied-title" class="section-title">Applied <span class="section-count">({{ applied_list | length }})</span></h2>
+          {% if applied_list %}
+            <div class="card-grid">
+              {% for candidate in applied_list %}
+                {% include "board/_card.html" %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="empty-section">No one here yet</p>
+          {% endif %}
+        </section>
+
+        <!-- Screening Section -->
+        <section class="board-section" aria-labelledby="sec-screening-title">
+          <h2 id="sec-screening-title" class="section-title">Screening <span class="section-count">({{ screening_list | length }})</span></h2>
+          {% if screening_list %}
+            <div class="card-grid">
+              {% for candidate in screening_list %}
+                {% include "board/_card.html" %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="empty-section">No one here yet</p>
+          {% endif %}
+        </section>
+
+        <!-- Interview Section -->
+        <section class="board-section" aria-labelledby="sec-interview-title">
+          <h2 id="sec-interview-title" class="section-title">Interview <span class="section-count">({{ interview_list | length }})</span></h2>
+          {% if interview_list %}
+            <div class="card-grid">
+              {% for candidate in interview_list %}
+                {% include "board/_card.html" %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="empty-section">No one here yet</p>
+          {% endif %}
+        </section>
+
+        <!-- Offer Section -->
+        <section class="board-section" aria-labelledby="sec-offer-title">
+          <h2 id="sec-offer-title" class="section-title">Offer <span class="section-count">({{ offer_list | length }})</span></h2>
+          {% if offer_list %}
+            <div class="card-grid">
+              {% for candidate in offer_list %}
+                {% include "board/_card.html" %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="empty-section">No one here yet</p>
+          {% endif %}
+        </section>
+
+        <!-- Hired Section -->
+        <section class="board-section" aria-labelledby="sec-hired-title">
+          <h2 id="sec-hired-title" class="section-title">Hired <span class="section-count">({{ hired_list | length }})</span></h2>
+          {% if hired_list %}
+            <div class="card-grid">
+              {% for candidate in hired_list %}
+                {% include "board/_card.html" %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="empty-section">No one here yet</p>
+          {% endif %}
+        </section>
+
+        <!-- Rejected Section -->
+        <section class="board-section" aria-labelledby="sec-rejected-title">
+          <h2 id="sec-rejected-title" class="section-title">Rejected <span class="section-count">({{ rejected_list | length }})</span></h2>
+          {% if rejected_list %}
+            <div class="card-grid">
+              {% for candidate in rejected_list %}
+                {% include "board/_card.html" %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="empty-section">No one here yet</p>
+          {% endif %}
+        </section>
       </div>
-      <div class="column-cards">
-        {% if rejected_list %}
-          {% for candidate in rejected_list %}
-            {% include "board/_card.html" %}
-          {% endfor %}
+
+    {% else %}
+      <!-- Single Stage View (view=<Stage>) -->
+      {% set single_list = [] %}
+      {% if current_view == 'Applied' %}
+        {% set single_list = applied_list %}
+      {% elif current_view == 'Screening' %}
+        {% set single_list = screening_list %}
+      {% elif current_view == 'Interview' %}
+        {% set single_list = interview_list %}
+      {% elif current_view == 'Offer' %}
+        {% set single_list = offer_list %}
+      {% elif current_view == 'Hired' %}
+        {% set single_list = hired_list %}
+      {% elif current_view == 'Rejected' %}
+        {% set single_list = rejected_list %}
+      {% endif %}
+
+      <section class="board-section" aria-labelledby="sec-single-title">
+        <h2 id="sec-single-title" class="section-title">{{ current_view }} &middot; {{ single_list | length }}</h2>
+        {% if single_list %}
+          <div class="card-grid">
+            {% for candidate in single_list %}
+              {% include "board/_card.html" %}
+            {% endfor %}
+          </div>
         {% else %}
-          <p class="empty-column">No one here yet</p>
+          <p class="empty-section">No one here yet</p>
         {% endif %}
-      </div>
-    </section>
+      </section>
+    {% endif %}
   </div>
 </div>

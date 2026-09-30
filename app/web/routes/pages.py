@@ -8,6 +8,7 @@ from fastapi.responses import HTMLResponse
 from app.features.pipeline.service import PipelineService
 from app.web.deps import get_pipeline_service
 from app.web.render import render
+from app.web.routes.candidates import get_board_context
 
 router = APIRouter(tags=["pages"])
 
@@ -16,25 +17,8 @@ router = APIRouter(tags=["pages"])
 def index_page(
     request: Request,
     service: Annotated[PipelineService, Depends(get_pipeline_service)],
+    view: str | None = None,
 ) -> HTMLResponse:
     """Render index page shell with board."""
-    board = service.board()
-    total = (
-        len(board.applied)
-        + len(board.screening)
-        + len(board.interview)
-        + len(board.offer)
-        + len(board.hired)
-        + len(board.rejected)
-    )
-    active = len(board.applied) + len(board.screening) + len(board.interview) + len(board.offer)
-    return render(
-        request,
-        "pages/index.html",
-        {
-            "board": board,
-            "total": total,
-            "active": active,
-            "now": service.clock.now(),
-        },
-    )
+    context = get_board_context(service, view)
+    return render(request, "pages/index.html", context)

@@ -1,6 +1,6 @@
 """Web route handlers for candidate management and board updates (SYSTEM_DESIGN §10.2)."""
 
-from typing import Annotated
+from typing import Annotated, Final
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse
@@ -15,9 +15,31 @@ from app.web.render import render
 router = APIRouter(tags=["web-candidates"])
 email_adapter: TypeAdapter[EmailStr] = TypeAdapter(EmailStr)
 
+CANONICAL_VIEWS: Final[dict[str, str]] = {
+    "all": "all",
+    "applied": "Applied",
+    "screening": "Screening",
+    "interview": "Interview",
+    "offer": "Offer",
+    "hired": "Hired",
+    "rejected": "Rejected",
+}
 
-def _get_board_context(service: PipelineService) -> dict[str, object]:
-    """Helper to retrieve and format Kanban board context."""
+
+def normalize_view(raw_view: str | None) -> str:
+    """Normalize raw view string to canonical stage name or 'all'."""
+    if not raw_view:
+        return "all"
+    key = raw_view.strip().lower()
+    return CANONICAL_VIEWS.get(key, "all")
+
+
+def get_board_context(
+    service: PipelineService,
+    raw_view: str | None = None,
+) -> dict[str, object]:
+    """Helper to retrieve and format Kanban board context for a given view."""
+    view = normalize_view(raw_view)
     board = service.board()
     total = (
         len(board.applied)
@@ -32,6 +54,7 @@ def _get_board_context(service: PipelineService) -> dict[str, object]:
         "board": board,
         "total": total,
         "active": active,
+        "view": view,
         "now": service.clock.now(),
     }
 
@@ -40,9 +63,10 @@ def _get_board_context(service: PipelineService) -> dict[str, object]:
 def get_board_partial(
     request: Request,
     service: Annotated[PipelineService, Depends(get_pipeline_service)],
+    view: str | None = None,
 ) -> HTMLResponse:
     """Render Kanban board partial."""
-    context = _get_board_context(service)
+    context = get_board_context(service, view)
     return render(request, "board/_board.html", context)
 
 
@@ -110,13 +134,14 @@ def create_candidate_route(
             status_code=200,
         )
 
-    context = _get_board_context(service)
+    context = get_board_context(service, "all")
     return render(
         request,
         "board/_board.html",
         context,
         toast=("success", f"Added {candidate.full_name}"),
         triggers={"close-dialog": ""},
+        headers={"HX-Push-Url": "/?view=all"},
         status_code=200,
     )
 
@@ -127,6 +152,7 @@ def advance_candidate_route(
     request: Request,
     service: Annotated[PipelineService, Depends(get_pipeline_service)],
     expected_version: Annotated[int, Form()],
+    view: Annotated[str | None, Form()] = None,
 ) -> HTMLResponse:
     """Advance candidate stage by one step."""
     try:
@@ -140,7 +166,7 @@ def advance_candidate_route(
         else:
             toast_msg = f"{updated.full_name} moved to {updated.stage.value}"
 
-        context = _get_board_context(service)
+        context = get_board_context(service, view)
         return render(
             request,
             "board/_board.html",
@@ -149,7 +175,7 @@ def advance_candidate_route(
             status_code=200,
         )
     except DomainError as err:
-        context = _get_board_context(service)
+        context = get_board_context(service, view)
         return render(
             request,
             "board/_board.html",
@@ -165,6 +191,7 @@ def reject_candidate_route(
     request: Request,
     service: Annotated[PipelineService, Depends(get_pipeline_service)],
     expected_version: Annotated[int, Form()],
+    view: Annotated[str | None, Form()] = None,
 ) -> HTMLResponse:
     """Reject candidate from their current active stage."""
     try:
@@ -175,7 +202,7 @@ def reject_candidate_route(
         )
         toast_msg = f"{updated.full_name} rejected at {updated.stage.value}"
 
-        context = _get_board_context(service)
+        context = get_board_context(service, view)
         return render(
             request,
             "board/_board.html",
@@ -184,7 +211,7 @@ def reject_candidate_route(
             status_code=200,
         )
     except DomainError as err:
-        context = _get_board_context(service)
+        context = get_board_context(service, view)
         return render(
             request,
             "board/_board.html",
