@@ -8,6 +8,7 @@ from sqlalchemy import Engine
 from app.core.clock import Clock
 from app.core.config import Settings
 from app.features.pipeline.service import PipelineService
+from app.features.search.service import SearchService
 
 
 def get_settings(request: Request) -> Settings:
@@ -34,3 +35,11 @@ def get_pipeline_service(
 ) -> PipelineService:
     """Provide PipelineService instance wired with state engine and clock."""
     return PipelineService(engine=engine, clock=clock)
+
+
+def get_search_service(
+    engine: Annotated[Engine, Depends(get_engine)],
+    clock: Annotated[Clock, Depends(get_clock)],
+) -> SearchService:
+    """Provide SearchService instance wired with state engine and clock."""
+    return SearchService(engine=engine, clock=clock)

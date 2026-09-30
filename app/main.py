@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.errors import register_error_handlers
 from app.api.v1.candidates import router as candidates_router
 from app.api.v1.health import router as health_router
+from app.api.v1.search import router as search_router
 from app.core.clock import Clock, SystemClock
 from app.core.config import Settings, get_settings
 from app.core.db import create_engine_for, run_migrations
@@ -53,6 +54,7 @@ def create_app(
 
     app.include_router(health_router)
     app.include_router(candidates_router)
+    app.include_router(search_router)
     app.include_router(web_candidates_router)
     app.include_router(pages_router)
 

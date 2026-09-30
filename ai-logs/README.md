@@ -35,4 +35,5 @@ All AI assistance used to build this project, kept as raw as possible.
 | antigravity/step-10-theme-security.md | 10 | Design tokens, base layout shell, double-submit CSRF, strict CSP and security headers middleware |
 | antigravity/step-11-board.md | 11 | Kanban board grouped by stage, add candidate modal, advance and reject HTMX routes |
 | antigravity/step-12-drawer.md | 12 | Candidate detail drawer, live stage timer, audit timeline, history verified badge, and add note route |
+| antigravity/step-13-search-engine.md | 13 | Search engine: deterministic rule parser, validator, SQLAlchemy Core repo, ranker, explanations, and golden test suite |
 
