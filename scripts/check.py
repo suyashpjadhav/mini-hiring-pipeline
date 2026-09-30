@@ -100,7 +100,7 @@ def main() -> None:
         eval_script = Path("scripts/eval.py")
         if eval_script.exists():
             print("=== Running eval gate ===")
-            ok, output = run_cmd(["uv", "run", "python", "-m", "scripts.eval"])
+            ok, output = run_cmd(["uv", "run", "python", "-m", "scripts.eval", "--gate"])
             print(output)
             if ok:
                 results.append(StepResult("eval gate", "PASS"))
