@@ -37,6 +37,7 @@ All AI assistance used to build this project, kept as raw as possible.
 | antigravity/step-12-drawer.md | 12 | Candidate detail drawer, live stage timer, audit timeline, history verified badge, and add note route |
 | antigravity/step-13-search-engine.md | 13 | Search engine: deterministic rule parser, validator, SQLAlchemy Core repo, ranker, explanations, and golden test suite |
 | antigravity/step-14-search-ui.md | 14 | Search UI: route GET /ui/search, header input + example chips, results & errors partials, CSP/CSS tokens, and web tests |
+| antigravity/step-15-genai-fallback.md | 15 | Grounded, schema-validated LLM fallback with rate limits, LRU cache, telemetry, and UI AI badge |
 | antigravity/step-16-evals.md | 16 | Offline search evaluation harness, quality gate, in-process test suite, and generated EVAL_REPORT.md |
 | antigravity/step-18-docs.md | 18 | As-built architecture docs, reviewer README, decisions log alignment, and quality gate verification |
 

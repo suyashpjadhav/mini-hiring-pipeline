@@ -9,14 +9,17 @@ from app.core.config import Settings
 def test_settings_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test default values of Settings."""
     monkeypatch.delenv("DATABASE_URL", raising=False)
-    settings = Settings()
+    monkeypatch.delenv("GEMINI_MODEL", raising=False)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    settings = Settings(_env_file=None)
     assert settings.app_env == "dev"
     assert settings.debug is False
     assert settings.database_url == "sqlite:///./var/app.db"
     assert settings.app_default_tz == "Asia/Kolkata"
     assert settings.job_title == "Senior Backend Engineer"
     assert settings.gemini_model == "gemini-2.5-flash"
-    assert settings.llm_timeout_s == 3.0
+    assert settings.llm_timeout_s == 4.0
+    assert settings.llm_thinking_budget == 0
     assert settings.llm_max_calls_per_min == 30
     assert settings.telemetry_log_queries is False
 

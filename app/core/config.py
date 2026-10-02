@@ -18,7 +18,8 @@ class Settings(BaseSettings):
     job_title: str = "Senior Backend Engineer"
     gemini_api_key: SecretStr | None = None
     gemini_model: str = "gemini-2.5-flash"
-    llm_timeout_s: float = 3.0
+    llm_timeout_s: float = 4.0
+    llm_thinking_budget: int = 0
     llm_max_calls_per_min: int = 30
     telemetry_log_queries: bool = False
     telemetry_path: str = "var/telemetry.jsonl"
